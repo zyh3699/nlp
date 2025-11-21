@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project_name }} - Paper2Agent{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Project Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">首页</a></li>
+                    <li class="breadcrumb-item active">{{ project_name }}</li>
+                </ol>
+            </nav>
+            
+            <div class="card mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                <div class="card-body p-4">
+                    <h1 class="display-5 mb-3">
+                        <i class="bi bi-folder-fill"></i> {{ project_name }}
+                    </h1>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h4 id="toolsCount">0</h4>
+                            <small>生成的工具</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 id="completedSteps">0/10</h4>
+                            <small>完成步骤</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 id="mcpStatus">-</h4>
+                            <small>MCP 状态</small>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 id="progress">0%</h4>
+                            <small>总体进度</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <ul class="nav nav-pills mb-4" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#pipeline">
+                <i class="bi bi-diagram-3"></i> Pipeline
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#tools">
+                <i class="bi bi-wrench"></i> 工具
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#outputs">
+                <i class="bi bi-file-earmark-text"></i> 输出文件
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#reports">
+                <i class="bi bi-bar-chart"></i> 报告
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#visualizations">
+                <i class="bi bi-graph-up"></i> 可视化
+            </a>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- Pipeline Tab -->
+        <div class="tab-pane fade show active" id="pipeline">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-diagram-3"></i> Pipeline 执行步骤</h5>
+                </div>
+                <div class="card-body">
+                    <div id="stepsContainer" class="row">
+                        <!-- Steps will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tools Tab -->
+        <div class="tab-pane fade" id="tools">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-wrench"></i> 生成的工具</h5>
+                </div>
+                <div class="card-body">
+                    <div id="toolsContainer" class="row">
+                        <!-- Tools will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Outputs Tab -->
+        <div class="tab-pane fade" id="outputs">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-file-earmark-text"></i> 输出文件</h5>
+                </div>
+                <div class="card-body">
+                    <div id="outputsContainer">
+                        <!-- Outputs will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div class="tab-pane fade" id="reports">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-bar-chart"></i> 质量报告</h5>
+                </div>
+                <div class="card-body">
+                    <div id="reportsContainer">
+                        <!-- Reports will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visualizations Tab -->
+        <div class="tab-pane fade" id="visualizations">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-graph-up"></i> 可视化结果</h5>
+                </div>
+                <div class="card-body">
+                    <div id="visualizationsContainer" class="row">
+                        <!-- Visualizations will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const projectName = "{{ project_name }}";
+
+$(document).ready(function() {
+    loadProjectInfo();
+    loadSteps();
+    loadTools();
+    loadOutputs();
+    loadReports();
+    loadVisualizations();
+});
+
+function loadProjectInfo() {
+    $.get(`/api/project/${projectName}`, function(project) {
+        $('#toolsCount').text(project.tools_count);
+        $('#completedSteps').text(`${project.completed_steps}/10`);
+        $('#mcpStatus').html(project.has_mcp ? 
+            '<i class="bi bi-check-circle-fill text-success"></i>' : 
+            '<i class="bi bi-x-circle"></i>');
+        $('#progress').text(`${project.progress}%`);
+    });
+}
+
+function loadSteps() {
+    $.get(`/api/project/${projectName}/steps`, function(steps) {
+        let html = '';
+        steps.forEach((step, index) => {
+            const statusClass = step.completed ? 'completed' : '';
+            const icon = step.completed ? 
+                '<i class="bi bi-check-circle-fill text-success"></i>' : 
+                '<i class="bi bi-circle text-muted"></i>';
+            
+            html += `
+                <div class="col-md-6 mb-3">
+                    <div class="card step-card ${statusClass}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">${icon} ${step.title}</h6>
+                                    <small class="text-muted">${step.name}</small>
+                                </div>
+                                ${!step.completed ? `
+                                    <button class="btn btn-sm btn-primary" 
+                                            onclick="executeStep('${projectName}', '${index + 1}', '${step.title}')">
+                                        <i class="bi bi-play-fill"></i> 执行
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        $('#stepsContainer').html(html);
+    });
+}
+
+function loadTools() {
+    $.get(`/api/project/${projectName}/tools`, function(tools) {
+        if (tools.length === 0) {
+            $('#toolsContainer').html(`
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-inbox display-1 text-muted"></i>
+                    <p class="text-muted mt-3">还没有生成工具</p>
+                </div>
+            `);
+            return;
+        }
+        
+        let html = '';
+        tools.forEach(tool => {
+            html += `
+                <div class="col-md-4 mb-3">
+                    <div class="card tool-card">
+                        <div class="card-body">
+                            <h6><i class="bi bi-file-code"></i> ${tool.name}</h6>
+                            <small class="text-muted">${tool.filename}</small>
+                            <div class="mt-2">
+                                <span class="badge bg-primary">${tool.lines} 行</span>
+                                <span class="badge bg-secondary">${formatFileSize(tool.size)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        $('#toolsContainer').html(html);
+    });
+}
+
+function loadOutputs() {
+    $.get(`/api/project/${projectName}/outputs`, function(outputs) {
+        if (outputs.length === 0) {
+            $('#outputsContainer').html(`
+                <p class="text-muted">没有输出文件</p>
+            `);
+            return;
+        }
+        
+        let html = '<div class="list-group">';
+        outputs.forEach(output => {
+            html += `
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="bi bi-file-json"></i> ${output.name}
+                        <br>
+                        <small class="text-muted">
+                            ${formatFileSize(output.size)} • ${formatDate(output.modified)}
+                        </small>
+                    </div>
+                    <button class="btn btn-sm btn-primary" 
+                            onclick="downloadFile('${projectName}', '${output.name}')">
+                        <i class="bi bi-download"></i> 下载
+                    </button>
+                </div>
+            `;
+        });
+        html += '</div>';
+        $('#outputsContainer').html(html);
+    });
+}
+
+function loadReports() {
+    $.get(`/api/project/${projectName}/reports`, function(reports) {
+        if (reports.length === 0) {
+            $('#reportsContainer').html(`
+                <p class="text-muted">没有生成报告</p>
+            `);
+            return;
+        }
+        
+        let html = '<div class="list-group">';
+        reports.forEach(report => {
+            html += `
+                <a href="#" class="list-group-item list-group-item-action" 
+                   onclick="viewReport('${projectName}', '${report.path}'); return false;">
+                    <i class="bi bi-file-text"></i> ${report.name}
+                    <br>
+                    <small class="text-muted">${report.path}</small>
+                </a>
+            `;
+        });
+        html += '</div>';
+        $('#reportsContainer').html(html);
+    });
+}
+
+function loadVisualizations() {
+    $.get(`/api/project/${projectName}/visualizations`, function(visualizations) {
+        if (visualizations.length === 0) {
+            $('#visualizationsContainer').html(`
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-image display-1 text-muted"></i>
+                    <p class="text-muted mt-3">还没有可视化结果</p>
+                </div>
+            `);
+            return;
+        }
+        
+        let html = '';
+        visualizations.forEach(viz => {
+            html += `
+                <div class="col-md-4 mb-3">
+                    <div class="card" style="cursor: pointer;" onclick="viewImage('${viz.path}', '${viz.name}')">
+                        <img src="${viz.path}" class="card-img-top" alt="${viz.name}" 
+                             style="max-height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h6>${viz.name}</h6>
+                            <small class="text-muted">${formatDate(viz.modified)}</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        $('#visualizationsContainer').html(html);
+    });
+}
+
+function viewImage(imagePath, imageName) {
+    const modal = $(`
+        <div class="modal fade" tabindex="-1">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="bi bi-image"></i> ${imageName}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img src="${imagePath}" class="img-fluid" alt="${imageName}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    `);
+    
+    $('body').append(modal);
+    const bsModal = new bootstrap.Modal(modal[0]);
+    bsModal.show();
+    
+    modal.on('hidden.bs.modal', function() {
+        $(this).remove();
+    });
+}
+
+function viewReport(projectName, reportPath) {
+    $.get(`/api/project/${projectName}/report/${reportPath}`, function(data) {
+        // Create modal to display report
+        const modal = $(`
+            <div class="modal fade" tabindex="-1">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="bi bi-file-text"></i> ${data.name}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <pre class="code-display">${data.content}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
+        
+        $('body').append(modal);
+        const bsModal = new bootstrap.Modal(modal[0]);
+        bsModal.show();
+        
+        modal.on('hidden.bs.modal', function() {
+            $(this).remove();
+        });
+    });
+}
+</script>
+{% endblock %}

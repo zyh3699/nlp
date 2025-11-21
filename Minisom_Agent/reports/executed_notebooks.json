@@ -1,0 +1,173 @@
+{
+  "execution_metadata": {
+    "execution_date": "2025-11-21",
+    "environment": "minisom-env",
+    "total_tutorials": 16,
+    "successful_executions": 12,
+    "simplified_replacements": 4,
+    "github_repo": "minisom",
+    "branch": "master"
+  },
+  "executed_tutorials": [
+    {
+      "title": "Advanced Visualization Techniques for SOM",
+      "description": "Comprehensive visualization tutorial demonstrating multiple advanced plotting techniques. Covers quality plots using mean differences, property plots for feature correlation analysis, distribution maps with polar plots showing min/mean/max per neuron, and starburst gradient visualization for finding similarity patterns. Uses both matplotlib and plotly for interactive visualizations.",
+      "original_path": "repo/minisom/examples/AdvancedVisualization.ipynb",
+      "execution_path": "notebooks/advanced_visualization/advanced_visualization_execution_final.ipynb",
+      "directory": "notebooks/advanced_visualization",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/AdvancedVisualization.ipynb",
+      "execution_status": "simplified",
+      "notes": "Simplified version created due to missing dependencies"
+    },
+    {
+      "title": "Basic Usage of MiniSom",
+      "description": "Comprehensive introductory tutorial demonstrating fundamental MiniSom operations on the seeds dataset. Covers data loading, normalization, SOM initialization with PCA weights, training, and multiple visualization techniques including distance maps, activation frequencies, and pie chart representations. Includes error tracking during training to help users understand convergence.",
+      "original_path": "repo/minisom/examples/BasicUsage.ipynb",
+      "execution_path": "notebooks/basic_usage/basic_usage_execution_final.ipynb",
+      "directory": "notebooks/basic_usage",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/BasicUsage.ipynb",
+      "execution_status": "original",
+      "notes": "Successfully executed original notebook"
+    },
+    {
+      "title": "Classification with SOM",
+      "description": "Supervised learning tutorial demonstrating classification using SOM. Implements custom classification function using label mapping, performs train-test split, and evaluates performance with sklearn metrics. Shows how to use SOM for classification by associating labels with winning neurons and handling unmapped neurons with default labels.",
+      "original_path": "repo/minisom/examples/Classification.ipynb",
+      "execution_path": "notebooks/classification/classification_execution_final.ipynb",
+      "directory": "notebooks/classification",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/Classification.ipynb",
+      "execution_status": "original",
+      "notes": "Successfully executed original notebook"
+    },
+    {
+      "title": "Clustering with SOM",
+      "description": "Focused tutorial on using SOM for clustering tasks. Demonstrates training on 2D feature subset, mapping samples to clusters using winner neurons, and visualizing cluster assignments with centroids. Shows how to convert 2D neuron coordinates to 1D cluster indices for practical cluster labeling.",
+      "original_path": "repo/minisom/examples/Clustering.ipynb",
+      "execution_path": "notebooks/clustering/clustering_execution_final.ipynb",
+      "directory": "notebooks/clustering",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/Clustering.ipynb",
+      "execution_status": "original",
+      "notes": "Successfully executed original notebook"
+    },
+    {
+      "title": "Color Quantization Using SOM",
+      "description": "Image processing tutorial demonstrating color quantization technique. Shows how to reshape image pixels into feature vectors, train SOM to learn color palette, and reconstruct image with quantized colors. Visualizes both original and quantized images along with learned color palette evolution.",
+      "original_path": "repo/minisom/examples/ColorQuantization.ipynb",
+      "execution_path": "notebooks/color_space_mapping/color_space_mapping_execution_final.ipynb",
+      "directory": "notebooks/color_space_mapping",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/ColorQuantization.ipynb",
+      "execution_status": "original",
+      "notes": "Successfully executed original notebook"
+    },
+    {
+      "title": "Color Space Mapping Visualization",
+      "description": "Tutorial exploring how SOM organizes colors in RGB space. Trains SOM on small set of named colors and visualizes how neurons organize themselves in color space. Compares different neighborhood functions (gaussian vs bubble) and shows resulting color gradients across the map.",
+      "original_path": "repo/minisom/examples/ColorSpaceMapping.ipynb",
+      "execution_path": "notebooks/color_space_mapping/color_space_mapping_execution_final.ipynb",
+      "directory": "notebooks/color_space_mapping",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/ColorSpaceMapping.ipynb",
+      "execution_status": "original",
+      "notes": "Successfully executed original notebook"
+    },
+    {
+      "title": "Democracy Index Social Data Mapping",
+      "description": "Social science application tutorial mapping countries by democracy metrics. Downloads Wikipedia data, preprocesses features, trains SOM, and creates multiple visualizations including country map with color-coded categories, feature planes showing metric distributions, and dominant feature mapping. Demonstrates comprehensive analysis workflow for multivariate social data.",
+      "original_path": "repo/minisom/examples/DemocracyIndex.ipynb",
+      "execution_path": "notebooks/democracy_index/democracy_index_execution_final.ipynb",
+      "directory": "notebooks/democracy_index",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/DemocracyIndex.ipynb",
+      "execution_status": "original",
+      "notes": "Successfully executed original notebook"
+    },
+    {
+      "title": "Feature Selection Based on SOM",
+      "description": "Advanced tutorial implementing feature selection algorithm based on SOM weights. Demonstrates loading democracy index data, training SOM, analyzing weight planes, and implementing custom feature selection function using random feature comparison. Compares SOM-based selection with traditional correlation and tree-based methods.",
+      "original_path": "repo/minisom/examples/FeatureSelection.ipynb",
+      "execution_path": "notebooks/feature_selection/feature_selection_execution_final.ipynb",
+      "directory": "notebooks/feature_selection",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/FeatureSelection.ipynb",
+      "execution_status": "simplified",
+      "notes": "Simplified version created due to missing dependencies"
+    },
+    {
+      "title": "Handwritten Digits Mapping",
+      "description": "Computer vision tutorial applying SOM to MNIST-style digit recognition. Loads digit dataset from sklearn, scales features, initializes with PCA, and creates visualization mapping showing digit clustering patterns. Generates both scatter plot with digit labels and mosaic of actual digit images arranged by SOM position.",
+      "original_path": "repo/minisom/examples/HandwrittenDigits.ipynb",
+      "execution_path": "notebooks/handwritten_digits/handwritten_digits_execution_final.ipynb",
+      "directory": "notebooks/handwritten_digits",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/HandwrittenDigits.ipynb",
+      "execution_status": "original",
+      "notes": "Successfully executed original notebook"
+    },
+    {
+      "title": "Hexagonal Topology Visualization",
+      "description": "Extension of BasicUsage tutorial focusing on hexagonal map topology instead of rectangular. Demonstrates how to train a SOM with hexagonal topology and create advanced visualizations using matplotlib patches. Shows coordinate conversion and custom plotting for hexagonal grids with color mapping.",
+      "original_path": "repo/minisom/examples/HexagonalTopology.ipynb",
+      "execution_path": "notebooks/hexagonal_topology/hexagonal_topology_execution_final.ipynb",
+      "directory": "notebooks/hexagonal_topology",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/HexagonalTopology.ipynb",
+      "execution_status": "original",
+      "notes": "Successfully executed original notebook"
+    },
+    {
+      "title": "Movie Cover Image Clustering",
+      "description": "Image processing tutorial clustering movie cover images. Loads images from directory, flattens and normalizes pixel data, trains SOM, and creates grid visualization showing similar covers grouped together. Handles collision cases and demonstrates preprocessing pipeline for image datasets.",
+      "original_path": "repo/minisom/examples/MovieCovers.ipynb",
+      "execution_path": "notebooks/movie_covers/movie_covers_execution_final.ipynb",
+      "directory": "notebooks/movie_covers",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/MovieCovers.ipynb",
+      "execution_status": "simplified",
+      "notes": "Simplified version created due to missing dependencies"
+    },
+    {
+      "title": "Outlier Detection Using SOM",
+      "description": "Anomaly detection tutorial using quantization error for outlier identification. Demonstrates generating synthetic data with known outliers, training SOM, computing quantization errors, setting threshold based on percentile, and visualizing outlier classification. Tests approach on multiple dataset geometries (blobs and circles).",
+      "original_path": "repo/minisom/examples/OutliersDetection.ipynb",
+      "execution_path": "notebooks/outliers_detection/outliers_detection_execution_final.ipynb",
+      "directory": "notebooks/outliers_detection",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/OutliersDetection.ipynb",
+      "execution_status": "original",
+      "notes": "Successfully executed original notebook"
+    },
+    {
+      "title": "Poems Analysis and Author Clustering",
+      "description": "NLP tutorial applying SOM to poetry analysis. Demonstrates web scraping for data collection, text preprocessing with stopword removal, GloVe embedding conversion, and SOM training for author clustering. Visualizes poems mapped to SOM grid colored by author, showing style similarity patterns.",
+      "original_path": "repo/minisom/examples/PoemsAnalysis.ipynb",
+      "execution_path": "notebooks/poems_analysis/poems_analysis_execution_final.ipynb",
+      "directory": "notebooks/poems_analysis",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/PoemsAnalysis.ipynb",
+      "execution_status": "simplified",
+      "notes": "Simplified version created due to missing dependencies"
+    },
+    {
+      "title": "Time Series Clustering",
+      "description": "Time series analysis tutorial applying SOM to sales transaction data. Loads weekly sales patterns, trains SOM with PCA initialization, and visualizes clusters of similar time series patterns in grid layout showing min/mean/max trends. Demonstrates SOM application to temporal data analysis.",
+      "original_path": "repo/minisom/examples/TimeSeries.ipynb",
+      "execution_path": "notebooks/time_series/time_series_execution_final.ipynb",
+      "directory": "notebooks/time_series",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/TimeSeries.ipynb",
+      "execution_status": "original",
+      "notes": "Successfully executed original notebook"
+    },
+    {
+      "title": "Topic Modeling with SOM",
+      "description": "Tutorial applying SOM to natural language processing task of topic extraction from 20newsgroups dataset. Demonstrates integration with sklearn for TF-IDF vectorization, training SOM on document vectors, and extracting topics by analyzing neuron weights. Shows how to map high-dimensional text data to interpretable topics.",
+      "original_path": "repo/minisom/examples/TopicModeling.ipynb",
+      "execution_path": "notebooks/topicmodeling/topicmodeling_execution_final.ipynb",
+      "directory": "notebooks/topicmodeling",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/TopicModeling.ipynb",
+      "execution_status": "original",
+      "notes": "Successfully executed original notebook"
+    },
+    {
+      "title": "Travelling Salesman Problem Solution",
+      "description": "Optimization tutorial applying SOM to TSP problem. Demonstrates generating circular point distribution, training linear SOM to find tour order, and visualizing convergence over iterations. Shows practical application of SOM to combinatorial optimization with error tracking.",
+      "original_path": "repo/minisom/examples/TravellingSalesmanProblem.ipynb",
+      "execution_path": "notebooks/travelling_salesman_problem/travelling_salesman_problem_execution_final.ipynb",
+      "directory": "notebooks/travelling_salesman_problem",
+      "github_url": "https://github.com/JustWhyKing/minisom/blob/master/examples/TravellingSalesmanProblem.ipynb",
+      "execution_status": "original",
+      "notes": "Successfully executed original notebook"
+    }
+  ]
+}

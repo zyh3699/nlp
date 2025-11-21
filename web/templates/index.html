@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Hero Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card hero-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                <div class="card-body p-5">
+                    <h1 class="display-4 fw-bold mb-3">
+                        <i class="bi bi-rocket-takeoff"></i> Paper2Agent
+                    </h1>
+                    <p class="lead mb-4">
+                        自动将研究教程转换为生产级 AI 工具
+                    </p>
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h3 class="display-6" id="totalProjects">0</h3>
+                                <p class="text-white-50">项目总数</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h3 class="display-6" id="totalTools">0</h3>
+                                <p class="text-white-50">生成的工具</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h3 class="display-6" id="completedProjects">0</h3>
+                                <p class="text-white-50">完成的项目</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <h3 class="display-6" id="mcpServers">0</h3>
+                                <p class="text-white-50">MCP 服务器</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2><i class="bi bi-folder"></i> 项目列表</h2>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newProjectModal">
+                    <i class="bi bi-plus-circle"></i> 新建项目
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects Grid -->
+    <div class="row" id="projectsGrid">
+        <!-- Projects will be loaded here -->
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">加载中...</span>
+            </div>
+            <p class="text-muted mt-3">加载项目列表...</p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4"><i class="bi bi-lightning"></i> 快速开始</h3>
+        </div>
+        <div class="col-md-4">
+            <div class="card quick-action-card h-100" style="cursor: pointer;" 
+                 data-bs-toggle="modal" data-bs-target="#newProjectModal">
+                <div class="card-body text-center">
+                    <i class="bi bi-file-earmark-plus display-1 text-primary mb-3"></i>
+                    <h5 class="card-title">1. 创建项目</h5>
+                    <p class="card-text text-muted">
+                        输入项目名称和 GitHub 仓库 URL
+                    </p>
+                    <button class="btn btn-primary mt-3">
+                        <i class="bi bi-plus-circle"></i> 立即创建
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card quick-action-card h-100" style="cursor: pointer;" 
+                 onclick="scrollToProjects()">
+                <div class="card-body text-center">
+                    <i class="bi bi-gear-wide-connected display-1 text-success mb-3"></i>
+                    <h5 class="card-title">2. 执行 Pipeline</h5>
+                    <p class="card-text text-muted">
+                        自动扫描、提取、封装工具
+                    </p>
+                    <button class="btn btn-success mt-3">
+                        <i class="bi bi-play-fill"></i> 查看项目
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card quick-action-card h-100" style="cursor: pointer;" 
+                 onclick="scrollToProjects()">
+                <div class="card-body text-center">
+                    <i class="bi bi-graph-up display-1 text-info mb-3"></i>
+                    <h5 class="card-title">3. 可视化结果</h5>
+                    <p class="card-text text-muted">
+                        查看报告、测试工具、生成图表
+                    </p>
+                    <button class="btn btn-info mt-3">
+                        <i class="bi bi-eye"></i> 查看结果
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+$(document).ready(function() {
+    loadProjects();
+    
+    // Auto refresh every 5 seconds if execution is running
+    setInterval(checkStatus, 5000);
+});
+
+function loadProjects() {
+    $.get('/api/projects', function(projects) {
+        updateStats(projects);
+        renderProjects(projects);
+    }).fail(function() {
+        $('#projectsGrid').html(`
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-exclamation-triangle display-1 text-warning"></i>
+                <p class="text-muted mt-3">无法加载项目列表</p>
+            </div>
+        `);
+    });
+}
+
+function updateStats(projects) {
+    $('#totalProjects').text(projects.length);
+    
+    let totalTools = 0;
+    let completed = 0;
+    let mcpServers = 0;
+    
+    projects.forEach(project => {
+        totalTools += project.tools_count;
+        if (project.completed_steps === 10) completed++;
+        if (project.has_mcp) mcpServers++;
+    });
+    
+    $('#totalTools').text(totalTools);
+    $('#completedProjects').text(completed);
+    $('#mcpServers').text(mcpServers);
+}
+
+function renderProjects(projects) {
+    if (projects.length === 0) {
+        $('#projectsGrid').html(`
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-inbox display-1 text-muted"></i>
+                <p class="text-muted mt-3">还没有项目，创建一个开始吧！</p>
+                <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#newProjectModal">
+                    <i class="bi bi-plus-circle"></i> 创建第一个项目
+                </button>
+            </div>
+        `);
+        return;
+    }
+    
+    let html = '';
+    projects.forEach(project => {
+        const progressColor = project.progress === 100 ? 'success' : 
+                             project.progress > 0 ? 'info' : 'secondary';
+        
+        html += `
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card project-card h-100">
+                    <div class="card-header bg-${progressColor} text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-folder-fill"></i> ${project.name}
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <small>进度</small>
+                                <small>${project.completed_steps}/10 步骤</small>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-${progressColor}" 
+                                     style="width: ${project.progress}%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="row text-center mb-3">
+                            <div class="col-6">
+                                <div class="metric">
+                                    <h4 class="text-primary">${project.tools_count}</h4>
+                                    <small class="text-muted">工具</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="metric">
+                                    ${project.has_mcp ? 
+                                        '<i class="bi bi-check-circle-fill text-success display-6"></i>' : 
+                                        '<i class="bi bi-x-circle text-muted display-6"></i>'}
+                                    <br><small class="text-muted">MCP</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="/project/${project.name}" class="btn btn-primary btn-sm w-100">
+                            <i class="bi bi-arrow-right-circle"></i> 查看详情
+                        </a>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    $('#projectsGrid').html(html);
+}
+
+function checkStatus() {
+    $.get('/api/status', function(status) {
+        if (status.running) {
+            $('#statusIndicator').html('<i class="bi bi-circle-fill text-warning"></i> 执行中...');
+        } else {
+            $('#statusIndicator').html('<i class="bi bi-circle-fill text-success"></i> 就绪');
+        }
+    });
+}
+
+function scrollToProjects() {
+    $('html, body').animate({
+        scrollTop: $('#projectsGrid').offset().top - 100
+    }, 500);
+}
+</script>
+{% endblock %}

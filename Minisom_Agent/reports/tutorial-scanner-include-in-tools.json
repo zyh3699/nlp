@@ -1,0 +1,141 @@
+{
+  "scan_metadata": {
+    "github_repo_name": "minisom",
+    "paper_name": "MiniSom: minimalistic and NumPy-based implementation of the Self Organizing Map",
+    "scan_date": "2025-11-20",
+    "total_files_scanned": 18,
+    "total_files_included_in_tools": 15,
+    "success": true,
+    "success_reason": "Successfully identified 15 high-quality tutorial notebooks suitable for tool extraction"
+  },
+  "tutorials": [
+    {
+      "path": "repo/minisom/examples/BasicUsage.ipynb",
+      "title": "Basic Usage of MiniSom",
+      "description": "Comprehensive introductory tutorial demonstrating fundamental MiniSom operations on the seeds dataset. Covers data loading, normalization, SOM initialization with PCA weights, training, and multiple visualization techniques including distance maps, activation frequencies, and pie chart representations. Includes error tracking during training to help users understand convergence.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Complete self-contained tutorial with runnable code showing essential SOM workflows including data preparation, training, and visualization. Highly reusable for similar clustering tasks."
+    },
+    {
+      "path": "repo/minisom/examples/HexagonalTopology.ipynb",
+      "title": "Hexagonal Topology Visualization",
+      "description": "Extension of BasicUsage tutorial focusing on hexagonal map topology instead of rectangular. Demonstrates how to train a SOM with hexagonal topology and create advanced visualizations using matplotlib patches. Shows coordinate conversion and custom plotting for hexagonal grids with color mapping.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Self-contained tutorial demonstrating hexagonal topology configuration and specialized visualization techniques. Reusable for applications requiring hexagonal SOM layouts."
+    },
+    {
+      "path": "repo/minisom/examples/TopicModeling.ipynb",
+      "title": "Topic Modeling with SOM",
+      "description": "Tutorial applying SOM to natural language processing task of topic extraction from 20newsgroups dataset. Demonstrates integration with sklearn for TF-IDF vectorization, training SOM on document vectors, and extracting topics by analyzing neuron weights. Shows how to map high-dimensional text data to interpretable topics.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Complete NLP application demonstrating SOM for topic modeling with clear input-output workflow. Reusable pattern for document clustering and topic extraction tasks."
+    },
+    {
+      "path": "repo/minisom/examples/Clustering.ipynb",
+      "title": "Clustering with SOM",
+      "description": "Focused tutorial on using SOM for clustering tasks. Demonstrates training on 2D feature subset, mapping samples to clusters using winner neurons, and visualizing cluster assignments with centroids. Shows how to convert 2D neuron coordinates to 1D cluster indices for practical cluster labeling.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Clear demonstration of clustering workflow with cluster assignment and visualization. Highly reusable for unsupervised clustering applications."
+    },
+    {
+      "path": "repo/minisom/examples/ColorQuantization.ipynb",
+      "title": "Color Quantization Using SOM",
+      "description": "Image processing tutorial demonstrating color quantization technique. Shows how to reshape image pixels into feature vectors, train SOM to learn color palette, and reconstruct image with quantized colors. Visualizes both original and quantized images along with learned color palette evolution.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Complete image processing workflow demonstrating practical application of SOM for color reduction. Reusable for image compression and color palette extraction tasks."
+    },
+    {
+      "path": "repo/minisom/examples/ColorSpaceMapping.ipynb",
+      "title": "Color Space Mapping Visualization",
+      "description": "Tutorial exploring how SOM organizes colors in RGB space. Trains SOM on small set of named colors and visualizes how neurons organize themselves in color space. Compares different neighborhood functions (gaussian vs bubble) and shows resulting color gradients across the map.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Self-contained demonstration of SOM topology learning with intuitive color visualization. Useful for understanding SOM organization principles and parameter effects."
+    },
+    {
+      "path": "repo/minisom/examples/HandwrittenDigits.ipynb",
+      "title": "Handwritten Digits Mapping",
+      "description": "Computer vision tutorial applying SOM to MNIST-style digit recognition. Loads digit dataset from sklearn, scales features, initializes with PCA, and creates visualization mapping showing digit clustering patterns. Generates both scatter plot with digit labels and mosaic of actual digit images arranged by SOM position.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Complete computer vision application with clear data preparation, training, and dual visualization approaches. Reusable for image classification and similarity mapping tasks."
+    },
+    {
+      "path": "repo/minisom/examples/Classification.ipynb",
+      "title": "Classification with SOM",
+      "description": "Supervised learning tutorial demonstrating classification using SOM. Implements custom classification function using label mapping, performs train-test split, and evaluates performance with sklearn metrics. Shows how to use SOM for classification by associating labels with winning neurons and handling unmapped neurons with default labels.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Complete classification workflow with clear input/output definition, train-test evaluation, and performance metrics. Reusable for supervised learning applications."
+    },
+    {
+      "path": "repo/minisom/examples/TravellingSalesmanProblem.ipynb",
+      "title": "Travelling Salesman Problem Solution",
+      "description": "Optimization tutorial applying SOM to TSP problem. Demonstrates generating circular point distribution, training linear SOM to find tour order, and visualizing convergence over iterations. Shows practical application of SOM to combinatorial optimization with error tracking.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Self-contained optimization application showing novel use of SOM for TSP. Reusable pattern for sequence optimization and routing problems."
+    },
+    {
+      "path": "repo/minisom/examples/FeatureSelection.ipynb",
+      "title": "Feature Selection Based on SOM",
+      "description": "Advanced tutorial implementing feature selection algorithm based on SOM weights. Demonstrates loading democracy index data, training SOM, analyzing weight planes, and implementing custom feature selection function using random feature comparison. Compares SOM-based selection with traditional correlation and tree-based methods.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Complete feature selection workflow with custom algorithm implementation. Reusable for dimensionality reduction and feature engineering tasks with clear parameter tuning guidance."
+    },
+    {
+      "path": "repo/minisom/examples/PoemsAnalysis.ipynb",
+      "title": "Poems Analysis and Author Clustering",
+      "description": "NLP tutorial applying SOM to poetry analysis. Demonstrates web scraping for data collection, text preprocessing with stopword removal, GloVe embedding conversion, and SOM training for author clustering. Visualizes poems mapped to SOM grid colored by author, showing style similarity patterns.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Complete NLP pipeline from data collection to clustering visualization. Reusable for text analysis, authorship attribution, and style analysis tasks."
+    },
+    {
+      "path": "repo/minisom/examples/MovieCovers.ipynb",
+      "title": "Movie Cover Image Clustering",
+      "description": "Image processing tutorial clustering movie cover images. Loads images from directory, flattens and normalizes pixel data, trains SOM, and creates grid visualization showing similar covers grouped together. Handles collision cases and demonstrates preprocessing pipeline for image datasets.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Self-contained image clustering workflow with preprocessing and grid visualization. Reusable for visual similarity analysis and image organization tasks."
+    },
+    {
+      "path": "repo/minisom/examples/TimeSeries.ipynb",
+      "title": "Time Series Clustering",
+      "description": "Time series analysis tutorial applying SOM to sales transaction data. Loads weekly sales patterns, trains SOM with PCA initialization, and visualizes clusters of similar time series patterns in grid layout showing min/mean/max trends. Demonstrates SOM application to temporal data analysis.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Complete time series clustering workflow with pattern visualization. Reusable for temporal pattern discovery and sales forecasting applications."
+    },
+    {
+      "path": "repo/minisom/examples/DemocracyIndex.ipynb",
+      "title": "Democracy Index Social Data Mapping",
+      "description": "Social science application tutorial mapping countries by democracy metrics. Downloads Wikipedia data, preprocesses features, trains SOM, and creates multiple visualizations including country map with color-coded categories, feature planes showing metric distributions, and dominant feature mapping. Demonstrates comprehensive analysis workflow for multivariate social data.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Complete social data analysis workflow with multiple visualization techniques and feature plane analysis. Highly reusable for multivariate geographic or social data exploration."
+    },
+    {
+      "path": "repo/minisom/examples/OutliersDetection.ipynb",
+      "title": "Outlier Detection Using SOM",
+      "description": "Anomaly detection tutorial using quantization error for outlier identification. Demonstrates generating synthetic data with known outliers, training SOM, computing quantization errors, setting threshold based on percentile, and visualizing outlier classification. Tests approach on multiple dataset geometries (blobs and circles).",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Complete outlier detection workflow with clear methodology and validation. Reusable for anomaly detection and data quality assessment tasks."
+    },
+    {
+      "path": "repo/minisom/examples/AdvancedVisualization.ipynb",
+      "title": "Advanced Visualization Techniques for SOM",
+      "description": "Comprehensive visualization tutorial demonstrating multiple advanced plotting techniques. Covers quality plots using mean differences, property plots for feature correlation analysis, distribution maps with polar plots showing min/mean/max per neuron, and starburst gradient visualization for finding similarity patterns. Uses both matplotlib and plotly for interactive visualizations.",
+      "type": "notebook",
+      "include_in_tools": true,
+      "reason_for_include_or_exclude": "Complete set of advanced visualization tools for SOM analysis. Highly reusable for in-depth model interpretation and result communication in any SOM application."
+    }
+  ]
+}

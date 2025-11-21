@@ -1,0 +1,21 @@
+COVERAGE SUMMARY - NO DATA AVAILABLE
+
+Coverage Report Generated: 2025-11-21
+
+WARNING: No test coverage data available
+- No test files found in tests/code/
+- No coverage reports generated
+- All source files have 0% coverage by default
+
+Total Coverage: 0% (0/0 lines covered)
+- Line Coverage: 0%
+- Branch Coverage: Not available
+- Function Coverage: 0/16 functions tested
+
+Files Analyzed: 4 modules
+- src/tools/advanced_visualization.py: 0% coverage
+- src/tools/basic_usage.py: 0% coverage
+- src/tools/classification.py: 0% coverage
+- src/tools/clustering.py: 0% coverage
+
+Recommendation: Implement test infrastructure before running coverage analysis.

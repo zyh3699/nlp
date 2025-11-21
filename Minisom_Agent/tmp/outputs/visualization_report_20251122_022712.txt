@@ -1,0 +1,45 @@
+
+======================================================================
+                   SOM VISUALIZATION ANALYSIS REPORT
+======================================================================
+
+MODEL INFORMATION
+-----------------
+Grid Size: 3 x 3
+Total Neurons: 9
+Input Dimensions: 4
+Training Samples: 9
+
+PERFORMANCE METRICS
+-------------------
+Quantization Error: 0.526584
+Topographic Error: 0.000000
+
+DATA DISTRIBUTION
+-----------------
+Classes: 3
+  Setosa: 3 samples (33.3%)
+  Versicolor: 3 samples (33.3%)
+  Virginica: 3 samples (33.3%)
+
+VISUALIZATIONS GENERATED
+------------------------
+1. Distance Map
+   /home/zephyr/Paper2Agent-main/Minisom_Agent/tmp/outputs/viz_distance_map_20251122_022710.png
+
+2. Scatter Map
+   /home/zephyr/Paper2Agent-main/Minisom_Agent/tmp/outputs/viz_scatter_map_20251122_022711.png
+
+3. Activation Frequencies
+   /home/zephyr/Paper2Agent-main/Minisom_Agent/tmp/outputs/viz_activation_freq_20251122_022711.png
+
+4. Class Distribution
+   /home/zephyr/Paper2Agent-main/Minisom_Agent/tmp/outputs/viz_class_distribution_20251122_022711.png
+
+5. Weight Planes
+   /home/zephyr/Paper2Agent-main/Minisom_Agent/tmp/outputs/viz_weight_planes_20251122_022712.png
+
+
+======================================================================
+Report generated: 2025-11-22 02:27:12
+======================================================================

@@ -1,0 +1,318 @@
+************* Module basic_usage
+src/tools/basic_usage.py:10:0: C0301: Line too long (106/100) (line-too-long)
+src/tools/basic_usage.py:51:0: C0301: Line too long (155/100) (line-too-long)
+src/tools/basic_usage.py:55:0: C0301: Line too long (108/100) (line-too-long)
+src/tools/basic_usage.py:78:0: C0301: Line too long (108/100) (line-too-long)
+src/tools/basic_usage.py:164:0: C0301: Line too long (102/100) (line-too-long)
+src/tools/basic_usage.py:182:0: C0301: Line too long (101/100) (line-too-long)
+src/tools/basic_usage.py:189:0: C0301: Line too long (123/100) (line-too-long)
+src/tools/basic_usage.py:274:0: C0301: Line too long (101/100) (line-too-long)
+src/tools/basic_usage.py:280:0: C0301: Line too long (104/100) (line-too-long)
+src/tools/basic_usage.py:281:0: C0301: Line too long (109/100) (line-too-long)
+src/tools/basic_usage.py:371:0: C0301: Line too long (122/100) (line-too-long)
+src/tools/basic_usage.py:432:0: C0301: Line too long (101/100) (line-too-long)
+src/tools/basic_usage.py:445:0: C0301: Line too long (131/100) (line-too-long)
+src/tools/basic_usage.py:517:0: C0301: Line too long (155/100) (line-too-long)
+src/tools/basic_usage.py:521:0: C0301: Line too long (108/100) (line-too-long)
+src/tools/basic_usage.py:540:0: C0301: Line too long (109/100) (line-too-long)
+src/tools/basic_usage.py:541:0: C0301: Line too long (118/100) (line-too-long)
+src/tools/basic_usage.py:21:0: R0402: Use 'from matplotlib import gridspec' instead (consider-using-from-import)
+src/tools/basic_usage.py:48:0: R0913: Too many arguments (11/5) (too-many-arguments)
+src/tools/basic_usage.py:48:0: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
+src/tools/basic_usage.py:48:0: R0914: Too many local variables (23/15) (too-many-locals)
+src/tools/basic_usage.py:95:8: W0702: No exception type(s) specified (bare-except)
+src/tools/basic_usage.py:138:4: C0415: Import outside toplevel (pickle) (import-outside-toplevel)
+src/tools/basic_usage.py:171:0: R0913: Too many arguments (6/5) (too-many-arguments)
+src/tools/basic_usage.py:171:0: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+src/tools/basic_usage.py:171:0: R0914: Too many local variables (20/15) (too-many-locals)
+src/tools/basic_usage.py:206:4: C0415: Import outside toplevel (pickle) (import-outside-toplevel)
+src/tools/basic_usage.py:180:4: W0613: Unused argument 'label_names' (unused-argument)
+src/tools/basic_usage.py:264:0: R0913: Too many arguments (6/5) (too-many-arguments)
+src/tools/basic_usage.py:264:0: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+src/tools/basic_usage.py:264:0: R0914: Too many local variables (20/15) (too-many-locals)
+src/tools/basic_usage.py:303:4: C0415: Import outside toplevel (pickle) (import-outside-toplevel)
+src/tools/basic_usage.py:388:4: C0415: Import outside toplevel (pickle) (import-outside-toplevel)
+src/tools/basic_usage.py:422:0: R0913: Too many arguments (8/5) (too-many-arguments)
+src/tools/basic_usage.py:422:0: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+src/tools/basic_usage.py:422:0: R0914: Too many local variables (24/15) (too-many-locals)
+src/tools/basic_usage.py:467:4: C0415: Import outside toplevel (pickle) (import-outside-toplevel)
+src/tools/basic_usage.py:489:17: W0612: Unused variable 'texts' (unused-variable)
+src/tools/basic_usage.py:514:0: R0913: Too many arguments (10/5) (too-many-arguments)
+src/tools/basic_usage.py:514:0: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
+src/tools/basic_usage.py:514:0: R0914: Too many local variables (24/15) (too-many-locals)
+src/tools/basic_usage.py:558:8: W0702: No exception type(s) specified (bare-except)
+src/tools/basic_usage.py:597:4: W0612: Unused variable 'fig' (unused-variable)
+src/tools/basic_usage.py:19:0: W0611: Unused Any imported from typing (unused-import)
+************* Module classification
+src/tools/classification.py:66:0: C0301: Line too long (144/100) (line-too-long)
+src/tools/classification.py:86:0: C0301: Line too long (130/100) (line-too-long)
+src/tools/classification.py:110:0: C0301: Line too long (108/100) (line-too-long)
+src/tools/classification.py:186:0: C0301: Line too long (104/100) (line-too-long)
+src/tools/classification.py:44:24: C0103: Argument name "X_train" doesn't conform to snake_case naming style (invalid-name)
+src/tools/classification.py:63:0: R0913: Too many arguments (12/5) (too-many-arguments)
+src/tools/classification.py:63:0: R0917: Too many positional arguments (12/5) (too-many-positional-arguments)
+src/tools/classification.py:63:0: R0914: Too many local variables (36/15) (too-many-locals)
+src/tools/classification.py:105:8: W0707: Consider explicitly re-raising using 'raise ValueError(f'Error loading data file: {e}') from e' (raise-missing-from)
+src/tools/classification.py:118:4: C0103: Variable name "X_train" doesn't conform to snake_case naming style (invalid-name)
+src/tools/classification.py:118:13: C0103: Variable name "X_test" doesn't conform to snake_case naming style (invalid-name)
+src/tools/classification.py:148:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+src/tools/classification.py:149:16: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+src/tools/classification.py:150:16: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+src/tools/classification.py:151:16: W1309: Using an f-string that does not have any interpolated variables (f-string-without-interpolation)
+src/tools/classification.py:14:0: W0611: Unused Any imported from typing (unused-import)
+************* Module advanced_visualization
+src/tools/advanced_visualization.py:64:0: C0301: Line too long (114/100) (line-too-long)
+src/tools/advanced_visualization.py:114:0: C0301: Line too long (111/100) (line-too-long)
+src/tools/advanced_visualization.py:135:0: C0301: Line too long (126/100) (line-too-long)
+src/tools/advanced_visualization.py:234:0: C0301: Line too long (111/100) (line-too-long)
+src/tools/advanced_visualization.py:263:0: C0301: Line too long (103/100) (line-too-long)
+src/tools/advanced_visualization.py:264:0: C0301: Line too long (139/100) (line-too-long)
+src/tools/advanced_visualization.py:398:0: C0325: Unnecessary parens after '=' keyword (superfluous-parens)
+src/tools/advanced_visualization.py:453:0: C0301: Line too long (111/100) (line-too-long)
+src/tools/advanced_visualization.py:555:0: C0301: Line too long (111/100) (line-too-long)
+src/tools/advanced_visualization.py:125:0: R0914: Too many local variables (24/15) (too-many-locals)
+src/tools/advanced_visualization.py:197:8: W0622: Redefining built-in 'property' (redefined-builtin)
+src/tools/advanced_visualization.py:177:4: C0103: Variable name "B" doesn't conform to snake_case naming style (invalid-name)
+src/tools/advanced_visualization.py:125:0: R0912: Too many branches (14/12) (too-many-branches)
+src/tools/advanced_visualization.py:245:0: R0913: Too many arguments (7/5) (too-many-arguments)
+src/tools/advanced_visualization.py:245:0: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+src/tools/advanced_visualization.py:245:0: R0914: Too many local variables (35/15) (too-many-locals)
+src/tools/advanced_visualization.py:299:4: C0103: Function name "distributionMap" doesn't conform to snake_case naming style (invalid-name)
+src/tools/advanced_visualization.py:299:4: R0913: Too many arguments (7/5) (too-many-arguments)
+src/tools/advanced_visualization.py:299:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+src/tools/advanced_visualization.py:323:33: R1735: Consider using '{"color": 'green'}' instead of a call to 'dict'. (use-dict-literal)
+src/tools/advanced_visualization.py:331:33: R1735: Consider using '{"color": 'blue'}' instead of a call to 'dict'. (use-dict-literal)
+src/tools/advanced_visualization.py:339:33: R1735: Consider using '{"color": 'red'}' instead of a call to 'dict'. (use-dict-literal)
+src/tools/advanced_visualization.py:299:30: W0613: Unused argument 'clusters' (unused-argument)
+src/tools/advanced_visualization.py:407:4: C0103: Variable name "distributionMapData" doesn't conform to snake_case naming style (invalid-name)
+src/tools/advanced_visualization.py:422:8: C0103: Variable name "distributionMapData" doesn't conform to snake_case naming style (invalid-name)
+src/tools/advanced_visualization.py:435:4: C0103: Variable name "noClusters" doesn't conform to snake_case naming style (invalid-name)
+src/tools/advanced_visualization.py:436:4: C0103: Variable name "clusterData" doesn't conform to snake_case naming style (invalid-name)
+src/tools/advanced_visualization.py:438:14: R1728: Consider using a generator instead 'max(l.max() for l in distributionMapData['max'].values)' (consider-using-generator)
+src/tools/advanced_visualization.py:439:14: R1728: Consider using a generator instead 'min(l.min() for l in distributionMapData['min'].values)' (consider-using-generator)
+src/tools/advanced_visualization.py:245:0: R0915: Too many statements (69/50) (too-many-statements)
+src/tools/advanced_visualization.py:435:4: W0612: Unused variable 'noClusters' (unused-variable)
+src/tools/advanced_visualization.py:436:4: W0612: Unused variable 'clusterData' (unused-variable)
+src/tools/advanced_visualization.py:464:0: C0103: Function name "findMin" doesn't conform to snake_case naming style (invalid-name)
+src/tools/advanced_visualization.py:477:0: C0103: Function name "findInternalNode" doesn't conform to snake_case naming style (invalid-name)
+src/tools/advanced_visualization.py:494:8: C0103: Variable name "C" doesn't conform to snake_case naming style (invalid-name)
+src/tools/advanced_visualization.py:501:0: R0914: Too many local variables (17/15) (too-many-locals)
+src/tools/advanced_visualization.py:541:21: R1735: Consider using '{"color": 'Black', "width": 1}' instead of a call to 'dict'. (use-dict-literal)
+src/tools/advanced_visualization.py:523:4: W0612: Unused variable 'norm' (unused-variable)
+src/tools/advanced_visualization.py:19:0: W0611: Unused Any imported from typing (unused-import)
+src/tools/advanced_visualization.py:28:0: W0611: Unused cm imported from matplotlib (unused-import)
+src/tools/advanced_visualization.py:30:0: W0611: Unused MiniSom imported from minisom (unused-import)
+************* Module clustering
+src/tools/clustering.py:71:0: C0301: Line too long (107/100) (line-too-long)
+src/tools/clustering.py:160:0: C0301: Line too long (112/100) (line-too-long)
+src/tools/clustering.py:43:0: R0913: Too many arguments (8/5) (too-many-arguments)
+src/tools/clustering.py:43:0: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+src/tools/clustering.py:43:0: R0914: Too many local variables (20/15) (too-many-locals)
+src/tools/clustering.py:14:0: W0611: Unused Any imported from typing (unused-import)
+src/tools/clustering.py:1:0: R0801: Similar lines in 2 files
+==basic_usage:[576:584]
+==classification:[125:133]
+        data.shape[1],
+        sigma=sigma,
+        learning_rate=learning_rate,
+        neighborhood_function=neighborhood_function,
+        random_seed=random_seed,
+    )
+
+    # Training with error tracking (duplicate-code)
+src/tools/clustering.py:1:0: R0801: Similar lines in 2 files
+==basic_usage:[80:88]
+==classification:[88:96]
+    if data_path is None:
+        raise ValueError("Path to input data file must be provided")
+
+    data_file = Path(data_path)
+    if not data_file.exists():
+        raise FileNotFoundError(f"Input file not found: {data_path}")
+
+    # Load data based on file extension (duplicate-code)
+src/tools/clustering.py:1:0: R0801: Similar lines in 2 files
+==basic_usage:[115:120]
+==classification:[125:130]
+        data.shape[1],
+        sigma=sigma,
+        learning_rate=learning_rate,
+        neighborhood_function=neighborhood_function,
+        random_seed=random_seed, (duplicate-code)
+src/tools/clustering.py:1:0: R0801: Similar lines in 2 files
+==basic_usage:[543:551]
+==clustering:[73:82]
+    if data_path is None:
+        raise ValueError("Path to input data file must be provided")
+
+    data_file = Path(data_path)
+    if not data_file.exists():
+        raise FileNotFoundError(f"Input file not found: {data_path}")
+
+    # Load data based on file extension (duplicate-code)
+
+
+Report
+======
+615 statements analysed.
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |4      |4          |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |0      |NC         |NC         |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+|method   |0      |NC         |NC         |0           |0        |
++---------+-------+-----------+-----------+------------+---------+
+|function |17     |17         |=          |100.00      |17.65    |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    fastmcp (advanced_visualization,basic_usage,classification,clustering)
+    matplotlib (advanced_visualization)
+      \-cm (advanced_visualization)
+      \-gridspec (basic_usage)
+      \-pyplot (advanced_visualization,basic_usage,clustering)
+    minisom (advanced_visualization,basic_usage,classification,clustering)
+    numpy (advanced_visualization,basic_usage,classification,clustering)
+    pandas (advanced_visualization,basic_usage,classification,clustering)
+    plotly 
+      \-graph_objects (advanced_visualization)
+      \-subplots (advanced_visualization)
+    sklearn 
+      \-metrics (classification)
+      \-model_selection (classification)
+      \-preprocessing (classification)
+
+
+
+1594 lines have been analyzed
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |1056   |66.25 |1056     |=          |
++----------+-------+------+---------+-----------+
+|docstring |188    |11.79 |188      |=          |
++----------+-------+------+---------+-----------+
+|comment   |121    |7.59  |121      |=          |
++----------+-------+------+---------+-----------+
+|empty     |229    |14.37 |229      |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |0          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |49     |49       |49         |
++-----------+-------+---------+-----------+
+|refactor   |41     |41       |41         |
++-----------+-------+---------+-----------+
+|warning    |21     |21       |21         |
++-----------+-------+---------+-----------+
+|error      |0      |0        |0          |
++-----------+-------+---------+-----------+
+
+
+
+% errors / warnings by module
+-----------------------------
+
++-----------------------+------+--------+---------+-----------+
+|module                 |error |warning |refactor |convention |
++=======================+======+========+=========+===========+
+|advanced_visualization |0.00  |38.10   |36.59    |36.73      |
++-----------------------+------+--------+---------+-----------+
+|basic_usage            |0.00  |28.57   |39.02    |44.90      |
++-----------------------+------+--------+---------+-----------+
+|classification         |0.00  |28.57   |7.32     |14.29      |
++-----------------------+------+--------+---------+-----------+
+|clustering             |0.00  |4.76    |17.07    |4.08       |
++-----------------------+------+--------+---------+-----------+
+
+
+
+Messages
+--------
+
++-------------------------------+------------+
+|message id                     |occurrences |
++===============================+============+
+|line-too-long                  |31          |
++-------------------------------+------------+
+|invalid-name                   |12          |
++-------------------------------+------------+
+|too-many-locals                |10          |
++-------------------------------+------------+
+|too-many-positional-arguments  |9           |
++-------------------------------+------------+
+|too-many-arguments             |9           |
++-------------------------------+------------+
+|unused-import                  |6           |
++-------------------------------+------------+
+|unused-variable                |5           |
++-------------------------------+------------+
+|import-outside-toplevel        |5           |
++-------------------------------+------------+
+|use-dict-literal               |4           |
++-------------------------------+------------+
+|duplicate-code                 |4           |
++-------------------------------+------------+
+|f-string-without-interpolation |3           |
++-------------------------------+------------+
+|unused-argument                |2           |
++-------------------------------+------------+
+|consider-using-generator       |2           |
++-------------------------------+------------+
+|bare-except                    |2           |
++-------------------------------+------------+
+|unspecified-encoding           |1           |
++-------------------------------+------------+
+|too-many-statements            |1           |
++-------------------------------+------------+
+|too-many-branches              |1           |
++-------------------------------+------------+
+|superfluous-parens             |1           |
++-------------------------------+------------+
+|redefined-builtin              |1           |
++-------------------------------+------------+
+|raise-missing-from             |1           |
++-------------------------------+------------+
+|consider-using-from-import     |1           |
++-------------------------------+------------+
+
+
+
+
+------------------------------------------------------------------
+Your code has been rated at 8.20/10 (previous run: 8.20/10, +0.00)
+

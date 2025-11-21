@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Coverage Report - No Data Available</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .warning { color: red; font-weight: bold; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Coverage Report</h1>
+    <div class="warning">
+        <h2>⚠️ No Coverage Data Available</h2>
+        <p>No test coverage data was found for this project.</p>
+    </div>
+
+    <div class="info">
+        <h3>Reason:</h3>
+        <ul>
+            <li>No test files found in <code>tests/code/</code> directory</li>
+            <li>No pytest execution detected</li>
+            <li>No coverage tracking configured</li>
+        </ul>
+
+        <h3>Recommendation:</h3>
+        <p>Create test files and run coverage analysis:</p>
+        <pre>
+pip install pytest pytest-cov
+pytest --cov=src/tools --cov-report=html --cov-report=json --cov-report=xml
+        </pre>
+    </div>
+
+    <p><small>Report generated: 2025-11-21</small></p>
+</body>
+</html>
