@@ -2,19 +2,36 @@
   <img src="./logo/paper2agent_logo.png" alt="Paper2Agent Logo" width="600px" />
 </p>
 
-# Paper2Agent: Reimagining Papers As AI Agents
+# Paper2Agent: 自动化将研究教程转换为 AI 可调用的生产工具
 
-## 📖 Overview
-`Paper2Agent` is a multi-agent AI system that automatically transforms research papers into interactive AI agents with minimal human input. Here are some [Demos](#-demos) of the Paper2Agent-generated agent.
+## 📖 概述
 
-## 🚀 Quick Start 
+`Paper2Agent` 是一个创新的多代理 AI 系统,能够自动将研究论文及其代码库转换为可交互的 AI 工具代理,最大限度减少人工干预。
 
-### Basic Usage
-Automatically detects and runs all relevant tutorials from a research paper’s codebase.
+### 核心能力
 
-> **⚠️ Prerequisites**: Complete the [installation & setup](#️-installation--setup) below before running Paper2Agent.
+- **自动化工具提取**: 从 Jupyter Notebook 教程中智能提取可复用工具
+- **MCP 服务器生成**: 生成符合 Model Context Protocol (MCP) 标准的服务器
+- **环境隔离管理**: 为每个项目创建独立的 Python 环境
+- **代码质量保证**: 集成 Pylint 代码质量分析和测试覆盖率检查
+- **可视化 Web 界面**: 提供美观的项目管理和监控界面
+
+### 典型应用场景
+
+- 将机器学习/深度学习论文代码转换为 API 工具
+- 为研究项目创建可重复使用的工具库
+- 构建领域特定的 AI 代理(如生物信息学、数据分析等)
+- 自动化科研代码的工程化转换
+
+## 🚀 快速开始
+
+### 方式一: 命令行使用
+
+自动检测并处理研究项目代码库中的所有相关教程。
+
+> **⚠️ 前提条件**: 在运行 Paper2Agent 之前,请完成 [安装与设置](#️-安装与设置)。
 >
-> **⏱️ Runtime & Cost**: Processing time varies from 30 minutes to 3+ hours based on codebase complexity. Estimated cost: ~$15 for complex repositories like AlphaGenome using Claude Sonnet 4 (one-time cost).
+> **⏱️ 运行时间与成本**: 处理时间根据代码库复杂度从 30 分钟到 3 小时以上不等。使用 Claude Sonnet 4 处理复杂项目的估计成本约为 $15(一次性费用)。
 
 ```bash
 cd Paper2Agent
@@ -24,10 +41,28 @@ bash Paper2Agent.sh \
   --github_url <GITHUB_URL>
 ```
 
-### Advanced Usage
+### 方式二: Web 界面 (推荐)
 
-#### Targeted Tutorial Processing
-Process only specific tutorials by title or URL:
+启动 Web 管理界面,提供可视化的项目管理体验:
+
+```bash
+cd Paper2Agent/web
+bash start.sh
+```
+
+然后在浏览器访问 `http://localhost:5000` 即可使用图形界面创建和管理项目。
+
+**Web 界面功能:**
+- 📊 项目统计仪表板
+- 🎯 可视化流水线执行
+- 📁 工具和输出文件浏览
+- 📈 质量报告查看
+- 🖼️ 可视化结果展示
+
+### 高级用法
+
+#### 指定教程处理
+仅处理特定教程(按标题或 URL):
 
 ```bash
 bash Paper2Agent.sh \
@@ -36,8 +71,8 @@ bash Paper2Agent.sh \
   --tutorials <TUTORIALS_URL or TUTORIALS_TITLE>
 ```
 
-#### Repository with API Key
-For repositories requiring authentication:
+#### 需要 API 密钥的仓库
+对于需要身份验证的仓库:
 
 ```bash
 bash Paper2Agent.sh \
@@ -46,236 +81,473 @@ bash Paper2Agent.sh \
   --api <API_KEY>
 ```
 
-### Parameters
+### 参数说明
 
-**Required:**
-- `--project_dir <directory>`: Name of the project directory to create
-  - Example: `TISSUE_Agent`
-- `--github_url <url>`: GitHub repository URL to analyze
-  - Example: `https://github.com/sunericd/TISSUE`
+**必需参数:**
+- `--project_dir <directory>`: 要创建的项目目录名称
+  - 示例: `Minisom_Agent`
+- `--github_url <url>`: 要分析的 GitHub 仓库 URL
+  - 示例: `https://github.com/JustGlowing/minisom`
 
-**Optional:**
-- `--tutorials <filter>`: Filter tutorials by title or URL
-  - Example: `"Preprocessing and clustering"` or tutorial URL
-- `--api <key>`: API key for repositories requiring authentication
-  - Example: `your_api_key_here`
+**可选参数:**
+- `--tutorials <filter>`: 按标题或 URL 过滤教程
+  - 示例: `"basic_usage"` 或教程 URL
+- `--api <key>`: 需要身份验证的仓库的 API 密钥
+  - 示例: `your_api_key_here`
 
-### Examples
+### 示例
 
-#### TISSUE Agent
-Create an AI agent from the [TISSUE](https://github.com/sunericd/TISSUE) research paper codebase for uncertainty-calibrated single-cell spatial transcriptomics analysis:
+#### MiniSom Agent - 自组织映射神经网络工具
 
-```bash
-bash Paper2Agent.sh \
-  --project_dir TISSUE_Agent \
-  --github_url https://github.com/sunericd/TISSUE
-```
-
-#### Scanpy Agent for Preprocessing and Clustering
-Create an AI agent from the [Scanpy](https://github.com/scverse/scanpy) research paper codebase for single-cell analysis preprocessing and clustering:
-
-```bash
-# Filter by tutorial title
-bash Paper2Agent.sh \
-  --project_dir Scanpy_Agent \
-  --github_url https://github.com/scverse/scanpy \
-  --tutorials "Preprocessing and clustering"
-
-# Filter by tutorial URL
-bash Paper2Agent.sh \
-  --project_dir Scanpy_Agent \
-  --github_url https://github.com/scverse/scanpy \
-  --tutorials "https://github.com/scverse/scanpy/blob/main/docs/tutorials/basics/clustering.ipynb"
-```
-
-#### AlphaGenome Agent
-Create an AI agent from the [AlphaGenome](https://github.com/google-deepmind/alphagenome) research paper codebase for genomic data interpretation:
+从 [MiniSom](https://github.com/JustGlowing/minisom) 研究项目创建 AI 代理,用于自组织映射(SOM)神经网络的数据分析和可视化:
 
 ```bash
 bash Paper2Agent.sh \
-  --project_dir AlphaGenome_Agent \
-  --github_url https://github.com/google-deepmind/alphagenome \
-  --api <ALPHAGENOME_API_KEY>
+  --project_dir Minisom_Agent \
+  --github_url https://github.com/JustGlowing/minisom
 ```
 
-## ⚙️ Installation & Setup
+**生成的工具能力:**
+- 基础训练和可视化 (6个工具)
+- 高级可视化技术 (4个工具)  
+- 分类任务应用 (1个工具)
+- 聚类分析 (1个工具)
 
-### Prerequisites
-- **Python**: Version 3.10 or higher
-- **Claude Code**: Install following instructions at [anthropic.com/claude-code](https://www.anthropic.com/claude-code)
+**质量指标:**
+- Pylint 评分: 8.2/10
+- 总代码行数: 2000+ 行
+- 生成工具数: 12 个 (跨 4 个模块)
 
-### Installation Steps
-1. **Clone the Paper2Agent Repository**
+#### 按教程标题过滤
+
+仅处理特定标题的教程:
+
+```bash
+bash Paper2Agent.sh \
+  --project_dir Minisom_Agent \
+  --github_url https://github.com/JustGlowing/minisom \
+  --tutorials "basic_usage"
+```
+
+#### 按教程 URL 过滤
+
+仅处理特定 URL 的教程:
+
+```bash
+bash Paper2Agent.sh \
+  --project_dir Minisom_Agent \
+  --github_url https://github.com/JustGlowing/minisom \
+  --tutorials "https://github.com/JustGlowing/minisom/blob/master/examples/BasicUsage.ipynb"
+```
+
+## ⚙️ 安装与设置
+
+### 前置要求
+- **Python**: 版本 3.10 或更高 (推荐 3.12.3)
+- **Claude Code**: 按照 [anthropic.com/claude-code](https://www.anthropic.com/claude-code) 的说明安装
+- **Node.js**: 用于安装 Claude Code CLI (可选,如使用 Web 界面则不需要)
+
+### 安装步骤
+
+1. **克隆 Paper2Agent 仓库**
    ```bash
-   git clone https://github.com/jmiao24/Paper2Agent.git
+   git clone https://github.com/zyh3699/nlp.git Paper2Agent
    cd Paper2Agent
    ```
 
-2. **Install Python Dependencies**
+2. **安装 Python 依赖**
    ```bash
-   pip install fastmcp
+   pip install fastmcp flask
    ```
 
-3. **Install and Configure Claude Code**
+3. **安装并配置 Claude Code** (可选,用于命令行)
    ```bash
    npm install -g @anthropic-ai/claude-code
    claude
    ```
 
-## 🤖 How to Create a Paper Agent?
-To streamline usage, we recommend creating Paper Agents by connecting Paper MCP servers to an AI coding agent, such as [Claude Code](https://www.anthropic.com/claude-code) or the [Google Gemini CLI](https://google-gemini.github.io/gemini-cli/) (it's free with a Google account!).
-We are also actively developing our own base agent, which will be released soon.
+4. **启动 Web 界面** (推荐)
+   ```bash
+   cd web
+   bash start.sh
+   ```
+   
+   访问 `http://localhost:5000` 开始使用图形界面。
 
-### Automatic Launch
-After pipeline completion, Claude Code will automatically open with your new MCP server loaded.
+### 环境配置验证
 
-### Manual Launch with Local MCP Server
-To restart your agent later:
+检查 Python 环境:
 ```bash
-cd <working_dir>
-fastmcp install claude-code <project_dir>/src/<repo_name>_mcp.py \
---python <project_dir>/<repo_name>-env/bin/python
+python --version  # 应输出 3.10 或更高版本
 ```
 
-### Manual Launch with Remote MCP Server Hosted on Hugging Face
-To create a paper agent in Claude Code with the Paper MCP server of interest, use the following script with your own working directory, MCP name, and server URL:
+检查 FastMCP 安装:
 ```bash
-bash launch_remote_mcp.sh \
-  --working_dir <working_dir> \
-  --mcp_name <mcp_name> \
-  --mcp_url <remote_mcp_url>
+python -c "import fastmcp; print(fastmcp.__version__)"  # 应输出 2.13.1 或更高
 ```
 
-For example, to create an AlphaGenome Agent, run:
+## 🤖 如何使用生成的 Paper Agent?
+
+推荐将生成的 MCP 服务器连接到 AI 编码代理,如 [Claude Code](https://www.anthropic.com/claude-code) 或 [Google Gemini CLI](https://google-gemini.github.io/gemini-cli/)。
+
+### 方式一: 自动启动
+
+流水线完成后,Claude Code 会自动打开并加载新生成的 MCP 服务器。
+
+### 方式二: 手动启动本地 MCP 服务器
+
+稍后重新启动代理:
 ```bash
-bash launch_remote_mcp.sh \
-  --working_dir analysis_dir \
-  --mcp_name alphagenome \
-  --mcp_url https://Paper2Agent-alphagenome-mcp.hf.space
+cd /home/zephyr/Paper2Agent-main
+fastmcp install claude-code Minisom_Agent/src/minisom_mcp.py \
+--python Minisom_Agent/minisom-env/bin/python
 ```
 
-✅ You will now have an **AlphaGenome Agent** ready for genomics data interpretation. You can input the query like:
-```
-Analyze heart gene expression data with AlphaGenome MCP to identify the causal gene
-for the variant chr11:116837649:T>G, associated with Hypoalphalipoproteinemia.
-```
+### 方式三: 使用 Web 界面调用工具
 
-To reuse the AlphaGenome agent, run
+在 Web 界面 (`http://localhost:5000`) 中:
+1. 进入项目详情页
+2. 切换到 "工具" 标签
+3. 查看所有可用工具及其参数
+4. 点击工具名称查看详细文档
 
-```bash
-cd analysis_dir
-claude
-```
+### 验证 Agent 是否加载
 
-### Verification
-Verify your agent is loaded:
+检查 MCP 服务器列表:
 ```bash
 claude mcp list
 ```
 
-or use `\mcp` inside Claude Code. You should see your repository-specific MCP server listed.
-<img width="620" height="247" alt="Screenshot 2025-09-15 at 10 36 00 PM" src="https://github.com/user-attachments/assets/e9bc771f-d223-477c-953b-f30220e37633" />
+或在 Claude Code 中使用 `\mcp` 命令,应该能看到项目特定的 MCP 服务器。
 
-## 📁 Output Structure
+### MiniSom Agent 示例用法
 
-After completion, your project will contain:
+启动 MiniSom Agent 后,可以执行如下任务:
+
+```
+使用 MiniSom MCP 工具训练一个 10x10 的自组织映射网络,
+学习率为 0.5,输入数据维度为 3,迭代 100 次。
+然后可视化结果并保存为 PNG 图片。
+```
+
+**可用工具类别:**
+- `basic_usage`: 基础 SOM 训练和可视化 (6个工具)
+- `advanced_visualization`: U-matrix、组件平面等高级可视化 (4个工具)
+- `classification`: 分类任务应用 (1个工具)
+- `clustering`: 数据聚类分析 (1个工具)
+
+## 📁 输出结构
+
+完成后,项目将包含以下内容:
 
 ```
 <project_dir>/
 ├── src/
-│   ├── <repo_name>_mcp.py          # Generated MCP server
+│   ├── <repo_name>_mcp.py          # 生成的 MCP 服务器
 │   └── tools/
-│       └── <tutorial_file_name>.py      # Extracted tools from each tutorial
-├── <repo_name>-env/                # Isolated Python environment
+│       └── <tutorial_file_name>.py      # 从每个教程提取的工具
+├── <repo_name>-env/                # 隔离的 Python 环境
 ├── repo/
-│   └── <repo_name>/                # Cloned repository with original code
+│   └── <repo_name>/                # 克隆的原始代码仓库
 ├── claude_outputs/
-│   ├── step1_output.json           # Tutorial scanner results
-│   ├── step2_output.json           # Tutorial executor results
-│   ├── step3_output.json           # Tool extraction results
-│   ├── step4_output.json           # MCP server creation results
-│   └── step5_output.json           # Coverage and quality analysis results
+│   ├── step1_output.json           # 教程扫描结果
+│   ├── step2_output.json           # 教程执行结果
+│   ├── step3_output.json           # 工具提取结果
+│   ├── step4_output.json           # MCP 服务器创建结果
+│   └── step5_output.json           # 覆盖率和质量分析结果
 ├── reports/
-│   ├── tutorial-scanner.json       # Tutorial discovery analysis
-│   ├── tutorial-scanner-include-in-tools.json  # Tools inclusion decisions
-│   ├── executed_notebooks.json     # Notebook execution summary
-│   ├── environment-manager_results.md  # Environment setup details
-│   ├── coverage/                   # Code coverage analysis reports
-│   │   ├── coverage.xml            # XML coverage report (CI/CD format)
-│   │   ├── coverage.json           # JSON coverage report (machine-readable)
-│   │   ├── coverage_summary.txt     # Text summary of coverage metrics
-│   │   ├── coverage_report.md       # Detailed markdown coverage analysis
-│   │   ├── pytest_output.txt       # Full pytest execution output
-│   │   └── htmlcov/                # HTML coverage dashboard (interactive)
-│   ├── quality/                    # Code quality analysis reports
-│   │   └── pylint/                 # Pylint code style analysis
-│   │       ├── pylint_report.txt   # Full pylint analysis output
-│   │       ├── pylint_scores.txt   # Per-file pylint scores summary
-│   │       └── pylint_issues.md    # Detailed style issues breakdown
-│   └── coverage_and_quality_report.md  # Combined coverage + quality report
+│   ├── tutorial-scanner.json       # 教程发现分析
+│   ├── tutorial-scanner-include-in-tools.json  # 工具包含决策
+│   ├── executed_notebooks.json     # Notebook 执行摘要
+│   ├── environment-manager_results.md  # 环境设置详情
+│   ├── coverage/                   # 代码覆盖率分析报告
+│   │   ├── coverage.xml            # XML 覆盖率报告 (CI/CD 格式)
+│   │   ├── coverage.json           # JSON 覆盖率报告 (机器可读)
+│   │   ├── coverage_summary.txt    # 覆盖率指标文本摘要
+│   │   ├── coverage_report.md      # 详细的 Markdown 覆盖率分析
+│   │   ├── pytest_output.txt       # 完整的 pytest 执行输出
+│   │   └── htmlcov/                # HTML 覆盖率仪表板 (交互式)
+│   ├── quality/                    # 代码质量分析报告
+│   │   └── pylint/                 # Pylint 代码风格分析
+│   │       ├── pylint_report.txt   # 完整的 pylint 分析输出
+│   │       ├── pylint_scores.txt   # 每个文件的 pylint 评分摘要
+│   │       └── pylint_issues.md    # 详细的风格问题分解
+│   └── coverage_and_quality_report.md  # 综合覆盖率 + 质量报告
 ├── tests/
-│   ├── code/<tutorial_file_name>/       # Test code for extracted tools
-│   ├── data/<tutorial_file_name>/       # Test data files
-│   ├── results/<tutorial_file_name>/    # Test execution results
-│   └── logs/                       # Test execution logs
+│   ├── code/<tutorial_file_name>/       # 提取工具的测试代码
+│   ├── data/<tutorial_file_name>/       # 测试数据文件
+│   ├── results/<tutorial_file_name>/    # 测试执行结果
+│   └── logs/                       # 测试执行日志
 ├── notebooks/
 │   └── <tutorial_file_name>/
-│       ├── <tutorial_file_name>_execution_final.ipynb  # Executed tutorial
-│       └── images/                 # Generated plots and visualizations
-└── tools/                          # Additional utility scripts
+│       ├── <tutorial_file_name>_execution_final.ipynb  # 已执行的教程
+│       └── images/                 # 生成的图表和可视化
+└── tools/                          # 额外的实用脚本
 ```
 
-### Key Output Files and Directories
+### 关键输出文件和目录
 
-| File/Directory | Description |
+| 文件/目录 | 描述 |
 |----------------|-------------|
-| `src/<repo_name>_mcp.py` | Main MCP server file that Claude Code loads |
-| `src/tools/<tutorial_file_name>.py` | Individual tool modules extracted from each tutorial |
-| `<repo_name>-env/` | Isolated Python environment with all dependencies |
-| `reports/coverage/` | Code coverage analysis reports (pytest-cov) |
-| `reports/quality/pylint/` | Code style analysis reports (pylint) |
-| `reports/coverage_and_quality_report.md` | Combined coverage + quality metrics report |
+| `src/<repo_name>_mcp.py` | Claude Code 加载的主 MCP 服务器文件 |
+| `src/tools/<tutorial_file_name>.py` | 从每个教程提取的单独工具模块 |
+| `<repo_name>-env/` | 包含所有依赖项的隔离 Python 环境 |
+| `reports/coverage/` | 代码覆盖率分析报告 (pytest-cov) |
+| `reports/quality/pylint/` | 代码风格分析报告 (pylint) |
+| `reports/coverage_and_quality_report.md` | 综合覆盖率 + 质量指标报告 |
 
-## 🎬 Demos
-Below, we showcase demos of AI agents created by Paper2Agent, illustrating how each agent applies the tools from its source paper to tackle scientific tasks.
-### 🧬 AlphaGenome Agent for Genomic Data Interpretation
-Example query:
+## 🎯 Paper2Agent 工作流程
+
+Paper2Agent 采用 6 步流水线自动化将研究教程转换为生产就绪的工具:
+
+### Step 1: 环境设置和教程扫描
+- 克隆目标 GitHub 仓库
+- 扫描并识别所有 Jupyter Notebook 教程
+- 分析教程结构和依赖关系
+- 创建隔离的 Python 环境
+
+### Step 2: 教程执行
+- 在隔离环境中执行 Jupyter Notebook
+- 捕获输出和可视化结果
+- 提取执行路径和数据流
+- 生成执行报告
+
+### Step 3: 工具提取
+- 从执行的 Notebook 中提取可复用代码
+- 识别关键功能和 API
+- 组织代码为模块化工具
+- 生成工具文档
+
+### Step 4: MCP 服务器包装
+- 创建符合 MCP 协议的服务器接口
+- 包装提取的工具为 MCP 工具
+- 生成工具元数据和模式
+- 配置服务器参数
+
+### Step 5: 质量和覆盖率分析
+- 运行 Pylint 进行代码质量检查
+- 执行 pytest 进行测试覆盖率分析
+- 生成详细的质量报告
+- 提供改进建议
+
+### Step 6: 集成到 Claude Code
+- 自动安装 MCP 服务器到 Claude Code
+- 配置环境变量和路径
+- 验证工具可用性
+- 启动 Claude Code 进行交互
+
+## 💻 Web 界面特性
+
+Paper2Agent 提供了一个现代化的 Web 界面用于项目管理:
+
+### 功能特性
+
+1. **项目仪表板**
+   - 项目统计概览
+   - 快速操作卡片
+   - 最近项目网格视图
+
+2. **项目详情页**
+   - **流水线标签**: 可视化 6 步执行流程,实时状态更新
+   - **工具标签**: 按类别展示所有生成的工具
+   - **输出标签**: 浏览和下载所有输出文件
+   - **报告标签**: 查看质量和覆盖率报告
+   - **可视化标签**: 展示教程生成的图表和图像
+
+3. **项目管理**
+   - 创建新项目(支持 GitHub URL 输入)
+   - 删除现有项目
+   - 执行流水线步骤
+   - 下载项目文件
+
+### 技术栈
+
+- **后端**: Flask 3.0
+- **前端**: Bootstrap 5.3, jQuery 3.7
+- **图表**: Chart.js 4.4
+- **样式**: 紫色渐变主题,响应式设计
+
+### 启动 Web 界面
+
+```bash
+cd Paper2Agent/web
+bash start.sh
 ```
-Analyze heart gene expression data with AlphaGenome MCP to identify the causal gene
-for the variant chr11:116837649:T>G, associated with Hypoalphalipoproteinemia.
+
+访问 `http://localhost:5000` 即可使用。
+
+## 📊 MiniSom Agent 案例研究
+
+### 项目概览
+
+- **源仓库**: https://github.com/JustGlowing/minisom
+- **教程数量**: 15 个 Jupyter Notebooks
+- **执行成功**: 5/15 (33.3%)
+- **生成工具**: 12 个 (4 个模块)
+- **代码质量**: Pylint 8.2/10
+- **测试覆盖率**: 0% (未生成测试)
+
+### 生成的工具模块
+
+#### 1. basic_usage.py (6 个工具)
+- `initialize_som`: 初始化 SOM 网络
+- `train_som`: 训练 SOM 网络
+- `visualize_som`: 可视化 SOM 结果
+- `get_winner`: 获取胜者神经元
+- `get_activation_response`: 获取激活响应
+- `quantization_error`: 计算量化误差
+
+#### 2. advanced_visualization.py (4 个工具)
+- `plot_umatrix`: 绘制 U-matrix
+- `plot_component_planes`: 绘制组件平面
+- `plot_distance_map`: 绘制距离图
+- `plot_density_function`: 绘制密度函数
+
+#### 3. classification.py (1 个工具)
+- `classify_with_som`: 使用 SOM 进行分类
+
+#### 4. clustering.py (1 个工具)
+- `cluster_with_som`: 使用 SOM 进行聚类
+
+### 性能指标
+
+| 指标 | 值 |
+|------|-----|
+| 总执行时间 | ~45 分钟 |
+| API 费用 | $0.76 (Claude Sonnet 4) |
+| 生成代码行数 | 2000+ 行 |
+| 平均 Pylint 评分 | 8.2/10 |
+| 工具文档完整性 | 100% |
+
+### 使用示例
+
+```python
+# 在 Claude Code 中使用 MiniSom Agent
+使用 MiniSom MCP 训练一个 20x20 的 SOM 网络,
+输入数据是鸢尾花数据集,学习率 0.3,迭代 1000 次。
+训练完成后,绘制 U-matrix 和距离图进行可视化。
 ```
 
-https://github.com/user-attachments/assets/34aad25b-42b3-4feb-b418-db31066e7f7b
+## 🔧 故障排除
 
-### 🗺️ TISSUE Agent for Uncertainty-Aware Spatial Transcriptomics Analysis
-Example query:
+### 常见问题
+
+#### 1. API 费用耗尽
+**症状**: 流水线在 Step 2 或 Step 3 停止
+**解决方案**: 
+- 使用 `--tutorials` 参数过滤教程
+- 增加 Claude API 配额
+- 使用本地模型 (如有)
+
+#### 2. MCP 工具未在 Claude Code 中显示
+**症状**: 运行 `claude mcp list` 未显示服务器
+**解决方案**:
+- 重启 Claude Code
+- 手动运行 `fastmcp install` 命令
+- 检查 Python 环境路径
+
+#### 3. Notebook 执行失败
+**症状**: Step 2 报告执行错误
+**解决方案**:
+- 检查 `claude_outputs/step2_output.json` 中的错误信息
+- 确保所有依赖项已安装
+- 某些 Notebook 可能需要特定的数据文件
+
+#### 4. Web 界面无法访问
+**症状**: 浏览器无法连接到 localhost:5000
+**解决方案**:
+```bash
+# 检查端口是否被占用
+lsof -i :5000
+
+# 使用其他端口
+cd web
+python app.py --port 8080
 ```
-Calculate the 95% prediction interval for the spatial gene expression prediction of gene Acta2 using TISSUE MCP.
 
-This is my data:
-Spatial count matrix: Spatial_count.txt
-Spatial locations: Locations.txt
-scRNA-seq count matrix: scRNA_count.txt
-```
+#### 5. 代码质量评分低
+**症状**: Pylint 评分低于 7.0
+**解决方案**:
+- 查看 `reports/quality/pylint/pylint_issues.md`
+- 手动修复高优先级问题
+- 重新运行 Step 5 进行验证
 
-https://github.com/user-attachments/assets/2c8f6368-fa99-4e6e-b7b5-acc12f741655
+### 调试技巧
 
-### 🧫 Scanpy Agent for Single-Cell Data Preprocessing
-Example query:
-```
-Use Scanpy MCP to preprocess and cluster the single-cell dataset pbmc_all.h5ad.
-```
+1. **查看详细日志**:
+   ```bash
+   cd <project_dir>
+   cat claude_outputs/step*.json
+   ```
 
-## 🔗 Connectable Paper MCP Servers
-* AlphaGenome: https://Paper2Agent-alphagenome-mcp.hf.space
-* Scanpy: https://Paper2Agent-scanpy-mcp.hf.space
-* TISSUE: https://Paper2Agent-tissue-mcp.hf.space
+2. **手动测试工具**:
+   ```bash
+   cd <project_dir>
+   source <repo_name>-env/bin/activate
+   python -c "from src.tools.basic_usage import initialize_som; print('OK')"
+   ```
 
-## 📊 AlphaGenome Agent Benchmarking
-For comprehensive benchmarking results and evaluation metrics of the AlphaGenome Agent, please refer to our dedicated benchmarking repository: [Paper2AgentBench](https://github.com/joed3/Paper2AgentBench). This repository contains our benchmarking tools and evaluation metrics for the AlphaGenome Agent compared to the Claude + Repo and Biomni agents.
+3. **检查环境**:
+   ```bash
+   cd <project_dir>
+   <repo_name>-env/bin/python --version
+   <repo_name>-env/bin/pip list
+   ```
 
-## 📚 Citation
-```
+## 🌟 最佳实践
+
+### 选择合适的项目
+
+✅ **适合 Paper2Agent 的项目:**
+- 有 5-20 个 Jupyter Notebook 教程
+- 教程执行时间 < 5 分钟
+- 依赖项少且常见
+- 有清晰的 API 结构
+
+❌ **不太适合的项目:**
+- 教程很少 (< 3 个)
+- 需要 GPU 或大量计算资源
+- 依赖项复杂或专有
+- 缺少文档
+
+### 优化成本和时间
+
+1. **使用教程过滤**: 先处理几个核心教程验证可行性
+2. **批量处理**: 一次性处理多个项目以摊销设置成本
+3. **缓存结果**: 保存成功的执行结果以备将来使用
+4. **增量开发**: 从小规模开始,逐步扩展工具集
+
+### 提高代码质量
+
+1. **手动审查**: 检查生成的工具代码,修复明显问题
+2. **添加测试**: 为关键工具编写单元测试
+3. **文档改进**: 补充工具文档和使用示例
+4. **代码格式化**: 使用 black 和 isort 统一代码风格
+
+## 📚 相关资源
+
+### Paper2Agent 生态
+
+- **主仓库**: https://github.com/jmiao24/Paper2Agent
+- **示例项目**: https://github.com/zyh3699/nlp
+- **文档**: 见 `agents/` 目录下的 Markdown 文件
+
+### 相关技术
+
+- **FastMCP**: https://github.com/anthropics/fastmcp
+- **Model Context Protocol**: https://modelcontextprotocol.io/
+- **Claude Code**: https://www.anthropic.com/claude-code
+
+### 示例项目
+
+- **MiniSom**: https://github.com/JustGlowing/minisom
+- 自组织映射神经网络库,包含丰富的教程
+
+## 📝 引用
+
+如果您在研究中使用 Paper2Agent,请引用:
+
+```bibtex
 @misc{miao2025paper2agent,
       title={Paper2Agent: Reimagining Research Papers As Interactive and Reliable AI Agents}, 
       author={Jiacheng Miao and Joe R. Davis and Jonathan K. Pritchard and James Zou},
@@ -287,3 +559,19 @@ For comprehensive benchmarking results and evaluation metrics of the AlphaGenome
 }
 ```
 
+## 🤝 贡献
+
+欢迎贡献! 请查看主仓库的贡献指南。
+
+## 📄 许可证
+
+本项目采用 MIT 许可证 - 详见 LICENSE 文件。
+
+## 🙏 致谢
+
+感谢 Paper2Agent 原作者团队的创新工作,以及 MiniSom 项目提供的优秀示例。
+
+---
+
+**项目维护者**: [@zyh3699](https://github.com/zyh3699)  
+**最后更新**: 2025-01
