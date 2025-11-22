@@ -324,9 +324,25 @@ def get_status():
     return jsonify(current_execution)
 
 
+@app.route('/api/project/<project_name>/mcp/tools')
+def get_project_mcp_tools(project_name):
+    """Get all MCP tools available for a specific project"""
+    try:
+        tools = load_mcp_tools(project_name)
+        return jsonify({
+            "success": True,
+            "project": project_name,
+            "tools": tools,
+            "count": len(tools)
+        })
+    except Exception as e:
+        logger.error(f"Error getting MCP tools for {project_name}: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 @app.route('/api/project/<project_name>/chat', methods=['POST'])
 def chat_with_claude(project_name):
-    """Chat with Claude using API (for API mode only)"""
+    """Chat with Claude using API with MCP tools support"""
     try:
         from anthropic import Anthropic
     except ImportError:
@@ -343,25 +359,192 @@ def chat_with_claude(project_name):
     try:
         client = Anthropic(api_key=api_key)
         
+        # Load MCP tools for this project
+        mcp_tools = load_mcp_tools(project_name)
+        
         # Build messages from history
         messages = history + [{"role": "user", "content": message}]
         
-        # Call Claude API
+        # Call Claude API with tools
         response = client.messages.create(
             model="claude-sonnet-4-20250514",
             max_tokens=4096,
+            tools=mcp_tools if mcp_tools else [],
             messages=messages,
-            system=f"You are a helpful assistant for the {project_name} project. Answer user questions clearly and concisely."
+            system=f"You are a helpful assistant for the {project_name} project. You have access to MCP tools that you can use to help the user."
         )
+        
+        # Handle tool use
+        if response.stop_reason == "tool_use":
+            # Execute tools and continue conversation
+            tool_results = []
+            for content in response.content:
+                if content.type == "tool_use":
+                    tool_result = execute_mcp_tool(project_name, content.name, content.input)
+                    tool_results.append({
+                        "type": "tool_result",
+                        "tool_use_id": content.id,
+                        "content": str(tool_result)
+                    })
+            
+            # Continue conversation with tool results
+            messages.append({"role": "assistant", "content": response.content})
+            messages.append({"role": "user", "content": tool_results})
+            
+            response = client.messages.create(
+                model="claude-sonnet-4-20250514",
+                max_tokens=4096,
+                tools=mcp_tools if mcp_tools else [],
+                messages=messages
+            )
+        
+        # Extract text response
+        response_text = ""
+        for content in response.content:
+            if hasattr(content, 'text'):
+                response_text += content.text
         
         return jsonify({
             "success": True,
-            "message": response.content[0].text
+            "message": response_text
         })
         
     except Exception as e:
         logger.error(f"Claude API error: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+def load_mcp_tools(project_name):
+    """Load MCP tools from project and convert to Anthropic tools format"""
+    import asyncio
+    import importlib
+    import sys
+    
+    async def _load_tools_async():
+        try:
+            project_dir = BASE_DIR / f"{project_name}_Agent"
+            tools_dir = project_dir / "src" / "tools"
+            
+            if not tools_dir.exists():
+                return []
+            
+            # Add project src to path
+            if str(project_dir / "src") not in sys.path:
+                sys.path.insert(0, str(project_dir / "src"))
+            
+            # Import all tool modules
+            tools = []
+            
+            for tool_file in sorted(tools_dir.glob("*.py")):
+                if tool_file.stem == "__init__":
+                    continue
+                
+                try:
+                    # Import the module
+                    module = importlib.import_module(f"tools.{tool_file.stem}")
+                    mcp_instance = getattr(module, f"{tool_file.stem}_mcp", None)
+                    
+                    if not mcp_instance:
+                        continue
+                    
+                    # Get all tools using FastMCP async API
+                    tools_dict = await mcp_instance.get_tools()
+                    
+                    for tool_name, tool_obj in tools_dict.items():
+                        # Convert MCP tool to Anthropic tool format
+                        tool_schema = {
+                            "name": tool_obj.name,
+                            "description": tool_obj.description or f"Tool: {tool_obj.name}",
+                            "input_schema": tool_obj.parameters
+                        }
+                        tools.append(tool_schema)
+                except Exception as e:
+                    logger.error(f"Error loading module {tool_file.stem}: {str(e)}")
+                    continue
+            
+            logger.info(f"Loaded {len(tools)} MCP tools for {project_name}")
+            return tools
+            
+        except Exception as e:
+            logger.error(f"Error loading MCP tools: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
+            return []
+    
+    # Run async function in sync context
+    try:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        result = loop.run_until_complete(_load_tools_async())
+        loop.close()
+        return result
+    except Exception as e:
+        logger.error(f"Error in async execution: {str(e)}")
+        return []
+
+
+def execute_mcp_tool(project_name, tool_name, tool_input):
+    """Execute an MCP tool and return the result"""
+    import asyncio
+    import importlib
+    import sys
+    
+    async def _execute_tool_async():
+        try:
+            project_dir = BASE_DIR / f"{project_name}_Agent"
+            tools_dir = project_dir / "src" / "tools"
+            
+            # Add project src to path
+            if str(project_dir / "src") not in sys.path:
+                sys.path.insert(0, str(project_dir / "src"))
+            
+            # Search for the tool in all modules
+            for tool_file in sorted(tools_dir.glob("*.py")):
+                if tool_file.stem == "__init__":
+                    continue
+                
+                try:
+                    module = importlib.import_module(f"tools.{tool_file.stem}")
+                    mcp_instance = getattr(module, f"{tool_file.stem}_mcp", None)
+                    
+                    if not mcp_instance:
+                        continue
+                    
+                    # Get all tools using FastMCP async API
+                    tools_dict = await mcp_instance.get_tools()
+                    
+                    if tool_name in tools_dict:
+                        tool_obj = tools_dict[tool_name]
+                        # Execute the tool function
+                        result = tool_obj.fn(**tool_input)
+                        
+                        # Handle async functions
+                        if asyncio.iscoroutine(result):
+                            result = await result
+                        
+                        return {"success": True, "result": result}
+                except Exception as e:
+                    logger.error(f"Error in module {tool_file.stem}: {str(e)}")
+                    continue
+            
+            return {"error": f"Tool {tool_name} not found"}
+            
+        except Exception as e:
+            logger.error(f"Error executing MCP tool {tool_name}: {str(e)}")
+            import traceback
+            logger.error(traceback.format_exc())
+            return {"error": str(e)}
+    
+    # Run async function in sync context
+    try:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        result = loop.run_until_complete(_execute_tool_async())
+        loop.close()
+        return result
+    except Exception as e:
+        logger.error(f"Error in async execution: {str(e)}")
+        return {"error": str(e)}
 
 
 def get_project_info(project_dir: Path) -> dict:

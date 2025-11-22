@@ -300,6 +300,75 @@
                     </div>
                 </div>
                 
+                <!-- MCP Tools Panel -->
+                <div class="row mt-3">
+                    <!-- Available Tools -->
+                    <div class="col-md-4">
+                        <div class="card" style="height: 500px; display: flex; flex-direction: column;">
+                            <div class="card-header bg-primary text-white" style="flex-shrink: 0;">
+                                <h6 class="mb-0">
+                                    <i class="bi bi-tools"></i> 可用工具 
+                                    <span class="badge bg-light text-primary" id="toolCount">0</span>
+                                </h6>
+                            </div>
+                            <div class="card-body p-0" style="flex: 1; overflow-y: auto;">
+                                <div id="toolsList" class="list-group list-group-flush">
+                                    <div class="text-center text-muted py-3">
+                                        <div class="spinner-border spinner-border-sm"></div>
+                                        <p class="small mt-2 mb-0">加载工具...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tool Details & Executor -->
+                    <div class="col-md-8">
+                        <div class="card" style="height: 500px; display: flex; flex-direction: column;">
+                            <div class="card-header bg-success text-white" style="flex-shrink: 0;">
+                                <h6 class="mb-0">
+                                    <i class="bi bi-play-circle"></i> 工具执行器
+                                </h6>
+                            </div>
+                            <div class="card-body" style="flex: 1; overflow-y: auto; padding: 1rem;">
+                                <div id="toolDetailsEmpty" class="text-center text-muted py-5">
+                                    <i class="bi bi-cursor display-1"></i>
+                                    <p class="mt-3">← 从左侧选择一个工具</p>
+                                </div>
+                                
+                                <div id="toolDetailsContent" style="display: none;">
+                                    <h5 id="selectedToolName" class="mb-3"></h5>
+                                    <p id="selectedToolDesc" class="text-muted"></p>
+                                    
+                                    <hr>
+                                    
+                                    <form id="toolExecuteForm">
+                                        <div id="toolParameters">
+                                            <!-- Parameters will be populated dynamically -->
+                                        </div>
+                                        
+                                        <div class="d-grid gap-2 mt-3">
+                                            <button type="button" class="btn btn-success" onclick="executeSelectedTool()">
+                                                <i class="bi bi-play-fill"></i> 执行工具
+                                            </button>
+                                        </div>
+                                    </form>
+                                    
+                                    <!-- Tool Result -->
+                                    <div id="toolResult" style="display: none;" class="mt-3">
+                                        <h6>执行结果：</h6>
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <pre id="toolResultContent" class="mb-0" style="max-height: 200px; overflow-y: auto;"></pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Quick Examples -->
                 <div class="card mt-3">
                     <div class="card-header">
@@ -1106,10 +1175,252 @@ function useExample(example) {
     $('#chatInput').focus();
 }
 
+// ========== MCP Tools Functions ==========
+
+let availableTools = [];
+let selectedTool = null;
+
+function loadMcpTools() {
+    $.get('/api/project/' + projectName + '/mcp/tools', function(response) {
+        if (response.success) {
+            availableTools = response.tools;
+            $('#toolCount').text(availableTools.length);
+            renderToolsList();
+        } else {
+            $('#toolsList').html(`
+                <div class="text-center text-muted p-3">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <p class="small mb-0">${response.error || '加载工具失败'}</p>
+                </div>
+            `);
+        }
+    }).fail(function(xhr) {
+        $('#toolsList').html(`
+            <div class="text-center text-danger p-3">
+                <i class="bi bi-x-circle"></i>
+                <p class="small mb-0">无法加载工具</p>
+            </div>
+        `);
+    });
+}
+
+function renderToolsList() {
+    if (availableTools.length === 0) {
+        $('#toolsList').html(`
+            <div class="text-center text-muted p-3">
+                <i class="bi bi-inbox"></i>
+                <p class="small mb-0">没有可用的工具</p>
+            </div>
+        `);
+        return;
+    }
+    
+    let html = '';
+    availableTools.forEach((tool, index) => {
+        html += `
+            <a href="javascript:void(0)" 
+               class="list-group-item list-group-item-action tool-item" 
+               data-tool-index="${index}"
+               onclick="selectTool(${index})">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-1 small">
+                            <i class="bi bi-wrench text-primary"></i> ${tool.name}
+                        </h6>
+                        <p class="mb-0 small text-muted text-truncate" style="max-width: 250px;">
+                            ${tool.description}
+                        </p>
+                    </div>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </div>
+            </a>
+        `;
+    });
+    
+    $('#toolsList').html(html);
+}
+
+function selectTool(index) {
+    selectedTool = availableTools[index];
+    
+    // Update active state
+    $('.tool-item').removeClass('active');
+    $(`.tool-item[data-tool-index="${index}"]`).addClass('active');
+    
+    // Show tool details
+    $('#toolDetailsEmpty').hide();
+    $('#toolDetailsContent').show();
+    $('#toolResult').hide();
+    
+    // Populate tool details
+    $('#selectedToolName').html(`<i class="bi bi-wrench text-success"></i> ${selectedTool.name}`);
+    $('#selectedToolDesc').text(selectedTool.description);
+    
+    // Generate parameter inputs
+    const params = selectedTool.input_schema?.properties || {};
+    const required = selectedTool.input_schema?.required || [];
+    
+    let paramsHtml = '';
+    
+    if (Object.keys(params).length === 0) {
+        paramsHtml = '<p class="text-muted small">此工具不需要参数</p>';
+    } else {
+        paramsHtml = '<h6 class="mb-3">参数：</h6>';
+        
+        for (const [paramName, paramInfo] of Object.entries(params)) {
+            const isRequired = required.includes(paramName);
+            const paramType = paramInfo.type || 'string';
+            
+            paramsHtml += `
+                <div class="mb-3">
+                    <label for="param_${paramName}" class="form-label small">
+                        ${paramName}
+                        ${isRequired ? '<span class="text-danger">*</span>' : ''}
+                        <span class="text-muted">(${paramType})</span>
+                    </label>
+            `;
+            
+            if (paramInfo.description) {
+                paramsHtml += `<small class="d-block text-muted mb-1">${paramInfo.description}</small>`;
+            }
+            
+            // Generate appropriate input based on type
+            if (paramType === 'boolean') {
+                paramsHtml += `
+                    <select class="form-select form-select-sm" id="param_${paramName}" ${isRequired ? 'required' : ''}>
+                        <option value="">选择...</option>
+                        <option value="true">True</option>
+                        <option value="false">False</option>
+                    </select>
+                `;
+            } else if (paramType === 'integer' || paramType === 'number') {
+                paramsHtml += `
+                    <input type="number" 
+                           class="form-control form-control-sm" 
+                           id="param_${paramName}" 
+                           placeholder="${paramInfo.default || ''}"
+                           ${isRequired ? 'required' : ''}>
+                `;
+            } else if (paramType === 'array') {
+                paramsHtml += `
+                    <textarea class="form-control form-control-sm" 
+                              id="param_${paramName}" 
+                              rows="3"
+                              placeholder="输入 JSON 数组，例如: [1, 2, 3]"
+                              ${isRequired ? 'required' : ''}></textarea>
+                `;
+            } else if (paramType === 'object') {
+                paramsHtml += `
+                    <textarea class="form-control form-control-sm" 
+                              id="param_${paramName}" 
+                              rows="4"
+                              placeholder='输入 JSON 对象，例如: {"key": "value"}'
+                              ${isRequired ? 'required' : ''}></textarea>
+                `;
+            } else {
+                paramsHtml += `
+                    <input type="text" 
+                           class="form-control form-control-sm" 
+                           id="param_${paramName}" 
+                           placeholder="${paramInfo.default || ''}"
+                           ${isRequired ? 'required' : ''}>
+                `;
+            }
+            
+            paramsHtml += '</div>';
+        }
+    }
+    
+    $('#toolParameters').html(paramsHtml);
+}
+
+function executeSelectedTool() {
+    if (!selectedTool) {
+        showToast('请先选择一个工具', 'warning');
+        return;
+    }
+    
+    // Collect parameters
+    const params = {};
+    const paramInputs = $('#toolParameters').find('[id^="param_"]');
+    
+    paramInputs.each(function() {
+        const paramName = $(this).attr('id').replace('param_', '');
+        let value = $(this).val();
+        
+        if (value) {
+            // Try to parse JSON for arrays and objects
+            if ($(this).is('textarea')) {
+                try {
+                    value = JSON.parse(value);
+                } catch (e) {
+                    // Keep as string if not valid JSON
+                }
+            } else if (value === 'true' || value === 'false') {
+                value = value === 'true';
+            } else if (!isNaN(value) && value !== '') {
+                value = Number(value);
+            }
+            
+            params[paramName] = value;
+        }
+    });
+    
+    // Show loading state
+    $('#toolResult').show();
+    $('#toolResultContent').html('<div class="text-center"><div class="spinner-border"></div><p class="mt-2">执行中...</p></div>');
+    
+    // Execute tool
+    $.ajax({
+        url: '/api/project/' + projectName + '/execute-mcp-tool',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            tool_name: selectedTool.name,
+            parameters: params
+        }),
+        success: function(response) {
+            if (response.success) {
+                const resultText = typeof response.result === 'string' 
+                    ? response.result 
+                    : JSON.stringify(response.result, null, 2);
+                
+                $('#toolResultContent').html(`
+                    <div class="alert alert-success mb-2">
+                        <i class="bi bi-check-circle"></i> 执行成功
+                    </div>
+                    <code>${escapeHtml(resultText)}</code>
+                `);
+                
+                showToast('工具执行成功', 'success');
+            } else {
+                $('#toolResultContent').html(`
+                    <div class="alert alert-danger">
+                        <i class="bi bi-x-circle"></i> 执行失败: ${escapeHtml(response.error)}
+                    </div>
+                `);
+                
+                showToast('工具执行失败', 'danger');
+            }
+        },
+        error: function(xhr) {
+            const error = xhr.responseJSON?.error || '执行失败';
+            $('#toolResultContent').html(`
+                <div class="alert alert-danger">
+                    <i class="bi bi-x-circle"></i> ${escapeHtml(error)}
+                </div>
+            `);
+            
+            showToast('工具执行失败', 'danger');
+        }
+    });
+}
+
 // Call initChat when chat tab is shown
 $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
     if ($(e.target).attr('href') === '#chat') {
         initChat();
+        loadMcpTools();
     }
 });
 </script>
