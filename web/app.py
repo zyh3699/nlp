@@ -324,6 +324,46 @@ def get_status():
     return jsonify(current_execution)
 
 
+@app.route('/api/project/<project_name>/chat', methods=['POST'])
+def chat_with_claude(project_name):
+    """Chat with Claude using API (for API mode only)"""
+    try:
+        from anthropic import Anthropic
+    except ImportError:
+        return jsonify({"success": False, "error": "anthropic package not installed. Run: pip install anthropic"}), 500
+    
+    data = request.json
+    message = data.get('message')
+    api_key = data.get('api_key')
+    history = data.get('history', [])
+    
+    if not message or not api_key:
+        return jsonify({"success": False, "error": "Missing message or API key"}), 400
+    
+    try:
+        client = Anthropic(api_key=api_key)
+        
+        # Build messages from history
+        messages = history + [{"role": "user", "content": message}]
+        
+        # Call Claude API
+        response = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=4096,
+            messages=messages,
+            system=f"You are a helpful assistant for the {project_name} project. Answer user questions clearly and concisely."
+        )
+        
+        return jsonify({
+            "success": True,
+            "message": response.content[0].text
+        })
+        
+    except Exception as e:
+        logger.error(f"Claude API error: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
 def get_project_info(project_dir: Path) -> dict:
     """Extract project information"""
     pipeline_dir = project_dir / ".pipeline"

@@ -9,8 +9,13 @@ cd "$SCRIPT_DIR"
 
 # Check if virtual environment exists
 if [ ! -d "../.venv" ]; then
-    echo "❌ 虚拟环境不存在，请先运行: python3 -m venv ../.venv"
-    exit 1
+    echo "⚠️  虚拟环境不存在，正在创建..."
+    cd .. && python3 -m venv .venv
+    if [ $? -ne 0 ]; then
+        echo "❌ 虚拟环境创建失败"
+        exit 1
+    fi
+    cd "$SCRIPT_DIR"
 fi
 
 # Activate virtual environment
@@ -18,7 +23,7 @@ echo "📦 激活虚拟环境..."
 source ../.venv/bin/activate
 
 # Install dependencies
-echo "📥 检查依赖..."
+echo "📥 安装/更新依赖..."
 pip install -q -r requirements.txt
 
 # Check if installation successful
