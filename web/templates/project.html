@@ -783,7 +783,7 @@ function formatMarkdown(text) {
 // Load MCP information
 function loadMcpInfo() {
     const repoName = projectName.toLowerCase();
-    const basePath = `/home/zephyr/Paper2Agent-main/${projectName}_Agent`;
+    const basePath = `${projectName}_Agent`;
     
     // Generate MCP install command
     const installCmd = `cd ${basePath} && fastmcp install claude-code src/${repoName}_mcp.py --python ${repoName}-env/bin/python`;
@@ -919,7 +919,7 @@ function initChat() {
     
     // Update MCP install command
     const repoName = projectName.toLowerCase();
-    const basePath = `/home/zephyr/Paper2Agent-main/${projectName}_Agent`;
+    const basePath = `${projectName}_Agent`;
     const installCmd = `fastmcp install claude-code ${basePath}/src/${repoName}_mcp.py --python ${basePath}/${repoName}-env/bin/python`;
     $('#mcpInstallCmdInput').val(installCmd);
     

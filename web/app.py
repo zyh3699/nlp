@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Paper2Agent Web Interface
-A beautiful web UI for managing the Paper2Agent pipeline
+READ Web Interface
+A beautiful web UI for managing the READ pipeline
 """
 
 import os
@@ -579,7 +579,7 @@ def get_project_info(project_dir: Path) -> dict:
 
 if __name__ == '__main__':
     print("\n" + "="*60)
-    print("🚀 Paper2Agent Web Interface")
+    print("🚀 READ Web Interface")
     print("="*60)
     print(f"\n📂 Base Directory: {BASE_DIR}")
     print(f"🌐 Access the interface at: http://localhost:5000")
