@@ -114,6 +114,10 @@ def create_project():
     if not project_name or not repo_url or not api_key:
         return jsonify({"error": "Missing required fields"}), 400
     
+    # Validate API key format (basic check)
+    if not api_key.startswith('sk-ant-'):
+        return jsonify({"error": "Invalid API key format. Should start with 'sk-ant-'"}), 400
+    
     try:
         # Set API key in environment
         env = os.environ.copy()
@@ -356,6 +360,10 @@ if __name__ == '__main__':
     print("="*60)
     print(f"\n📂 Base Directory: {BASE_DIR}")
     print(f"🌐 Access the interface at: http://localhost:5000")
+    print("\n🔐 Security Notice:")
+    print("   - API keys are NOT stored permanently")
+    print("   - Each project creation requires API key input")
+    print("   - Keys are only used during pipeline execution")
     print("\n" + "="*60 + "\n")
     
     app.run(host='0.0.0.0', port=5000, debug=True)

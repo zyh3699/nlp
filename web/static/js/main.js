@@ -4,6 +4,31 @@
 let currentProject = null;
 let statusCheckInterval = null;
 
+// Toggle API key visibility
+function toggleApiKeyVisibility() {
+    const apiKeyInput = $('#apiKey');
+    const toggleIcon = $('#apiKeyToggleIcon');
+    
+    if (apiKeyInput.attr('type') === 'password') {
+        apiKeyInput.attr('type', 'text');
+        toggleIcon.removeClass('bi-eye').addClass('bi-eye-slash');
+    } else {
+        apiKeyInput.attr('type', 'password');
+        toggleIcon.removeClass('bi-eye-slash').addClass('bi-eye');
+    }
+}
+
+// Validate API key format
+function validateApiKey(apiKey) {
+    if (!apiKey.startsWith('sk-ant-')) {
+        return { valid: false, message: 'API 密钥格式不正确,应以 sk-ant- 开头' };
+    }
+    if (apiKey.length < 20) {
+        return { valid: false, message: 'API 密钥长度不足' };
+    }
+    return { valid: true, message: '' };
+}
+
 // Create new project
 function createProject() {
     const projectName = $('#projectName').val();
@@ -12,6 +37,13 @@ function createProject() {
     
     if (!projectName || !repoUrl || !apiKey) {
         showToast('请填写所有必填字段', 'warning');
+        return;
+    }
+    
+    // Validate API key
+    const validation = validateApiKey(apiKey);
+    if (!validation.valid) {
+        showToast(validation.message, 'danger');
         return;
     }
     

@@ -95,14 +95,26 @@
                         </div>
                         <div class="mb-3">
                             <label for="apiKey" class="form-label">
-                                Anthropic API Key
+                                <i class="bi bi-shield-lock"></i> Anthropic API Key
                                 <i class="bi bi-question-circle" data-bs-toggle="tooltip" 
                                    title="从 console.anthropic.com 获取"></i>
                             </label>
-                            <input type="password" class="form-control" id="apiKey" 
-                                   placeholder="sk-ant-api03-..." required>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="bi bi-key"></i>
+                                </span>
+                                <input type="password" class="form-control" id="apiKey" 
+                                       placeholder="sk-ant-api03-..." required>
+                                <button class="btn btn-outline-secondary" type="button" 
+                                        onclick="toggleApiKeyVisibility()">
+                                    <i class="bi bi-eye" id="apiKeyToggleIcon"></i>
+                                </button>
+                            </div>
                             <small class="form-text text-muted">
-                                用于 Claude Code 执行 Pipeline
+                                <i class="bi bi-shield-check"></i> 您的 API 密钥不会被存储,仅用于当前项目的 Pipeline 执行
+                            </small>
+                            <small class="form-text text-warning d-block mt-1">
+                                <i class="bi bi-exclamation-triangle"></i> 请勿与他人共享您的 API 密钥
                             </small>
                         </div>
                     </form>
