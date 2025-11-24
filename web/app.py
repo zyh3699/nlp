@@ -16,6 +16,7 @@ import logging
 app = Flask(__name__)
 CORS(app)
 app.config['SECRET_KEY'] = 'paper2agent-secret-key'
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB max file size
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -25,6 +26,10 @@ logger = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).parent.parent
 AGENTS_DIR = BASE_DIR / "agents"
 SCRIPTS_DIR = BASE_DIR / "scripts"
+UPLOADS_DIR = BASE_DIR / "web" / "uploads"
+
+# Create uploads directory if it doesn't exist
+UPLOADS_DIR.mkdir(exist_ok=True)
 
 # Global state
 current_execution = {
@@ -59,6 +64,36 @@ def list_projects():
             project_info = get_project_info(item)
             projects.append(project_info)
     return jsonify(projects)
+
+
+@app.route('/api/upload', methods=['POST'])
+def upload_file():
+    """Upload a file and return the file path"""
+    try:
+        if 'file' not in request.files:
+            return jsonify({"success": False, "error": "No file provided"}), 400
+        
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({"success": False, "error": "No file selected"}), 400
+        
+        # Save file with timestamp to avoid conflicts
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{timestamp}_{file.filename}"
+        filepath = UPLOADS_DIR / filename
+        file.save(str(filepath))
+        
+        logger.info(f"File uploaded: {filepath}")
+        return jsonify({
+            "success": True,
+            "filepath": str(filepath),
+            "filename": filename
+        })
+    except Exception as e:
+        logger.error(f"Error uploading file: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 @app.route('/api/project/<project_name>')
@@ -352,9 +387,17 @@ def chat_with_claude(project_name):
     message = data.get('message')
     api_key = data.get('api_key')
     history = data.get('history', [])
+    uploaded_files = data.get('uploaded_files', [])
     
     if not message or not api_key:
         return jsonify({"success": False, "error": "Missing message or API key"}), 400
+    
+    # If files were uploaded, add file information to the message
+    if uploaded_files:
+        file_info = "\n\n已上传的文件：\n"
+        for file_data in uploaded_files:
+            file_info += f"- {file_data['filename']} (路径: {file_data['filepath']})\n"
+        message = message + file_info
     
     try:
         client = Anthropic(api_key=api_key)
@@ -412,6 +455,35 @@ def chat_with_claude(project_name):
     except Exception as e:
         logger.error(f"Claude API error: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route('/api/project/<project_name>/execute-mcp-tool', methods=['POST'])
+def api_execute_mcp_tool(project_name):
+    """Execute an MCP tool"""
+    try:
+        data = request.json
+        tool_name = data.get('tool_name')
+        tool_input = data.get('parameters', {})
+        
+        logger.info(f"API received tool_name: {tool_name}")
+        logger.info(f"API received parameters: {tool_input}")
+        
+        if not tool_name:
+            return jsonify({"error": "tool_name is required"}), 400
+        
+        # Handle file uploads - replace uploaded file references
+        if isinstance(tool_input, dict):
+            for key, value in tool_input.items():
+                if isinstance(value, str) and value.startswith('__UPLOAD__:'):
+                    # Extract the actual file path
+                    tool_input[key] = value.replace('__UPLOAD__:', '')
+        
+        logger.info(f"Final parameters after processing: {tool_input}")
+        result = execute_mcp_tool(project_name, tool_name, tool_input)
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"Error executing MCP tool: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 
 def load_mcp_tools(project_name):
@@ -494,40 +566,90 @@ def execute_mcp_tool(project_name, tool_name, tool_input):
             project_dir = BASE_DIR / f"{project_name}_Agent"
             tools_dir = project_dir / "src" / "tools"
             
+            logger.info(f"Executing tool: {tool_name} with input: {tool_input}")
+            logger.info(f"Project dir: {project_dir}")
+            logger.info(f"Tools dir: {tools_dir}")
+            
+            # Set custom output directory if out_prefix is provided as a path
+            if 'out_prefix' in tool_input and tool_input['out_prefix']:
+                out_prefix_value = str(tool_input['out_prefix']).strip()
+                if out_prefix_value:
+                    custom_output = Path(out_prefix_value)
+                    
+                    # Check if it's a path (contains / or is absolute)
+                    if custom_output.is_absolute() or '/' in out_prefix_value:
+                        # It's a directory path
+                        output_dir = custom_output if not custom_output.suffix else custom_output.parent
+                        
+                        # Create directory if it doesn't exist
+                        try:
+                            output_dir.mkdir(parents=True, exist_ok=True)
+                            logger.info(f"Created/verified output directory: {output_dir}")
+                        except Exception as e:
+                            logger.warning(f"Could not create output directory {output_dir}: {e}")
+                        
+                        # Set environment variables for all tool modules
+                        os.environ['BASIC_USAGE_OUTPUT_DIR'] = str(output_dir)
+                        os.environ['ADVANCED_VISUALIZATION_OUTPUT_DIR'] = str(output_dir)
+                        os.environ['CLASSIFICATION_OUTPUT_DIR'] = str(output_dir)
+                        os.environ['CLUSTERING_OUTPUT_DIR'] = str(output_dir)
+                        logger.info(f"Set custom output directory: {output_dir}")
+                    else:
+                        # It's just a filename prefix, keep it in tool_input
+                        logger.info(f"Using filename prefix: {out_prefix_value}")
+            
             # Add project src to path
             if str(project_dir / "src") not in sys.path:
                 sys.path.insert(0, str(project_dir / "src"))
             
             # Search for the tool in all modules
+            all_tools = []
             for tool_file in sorted(tools_dir.glob("*.py")):
                 if tool_file.stem == "__init__":
                     continue
                 
                 try:
+                    logger.info(f"Checking module: {tool_file.stem}")
                     module = importlib.import_module(f"tools.{tool_file.stem}")
                     mcp_instance = getattr(module, f"{tool_file.stem}_mcp", None)
                     
                     if not mcp_instance:
+                        logger.warning(f"No MCP instance found in {tool_file.stem}")
                         continue
                     
                     # Get all tools using FastMCP async API
                     tools_dict = await mcp_instance.get_tools()
+                    all_tools.extend(tools_dict.keys())
+                    logger.info(f"Module {tool_file.stem} has tools: {list(tools_dict.keys())}")
                     
                     if tool_name in tools_dict:
+                        logger.info(f"Found tool {tool_name} in {tool_file.stem}")
                         tool_obj = tools_dict[tool_name]
-                        # Execute the tool function
-                        result = tool_obj.fn(**tool_input)
                         
-                        # Handle async functions
-                        if asyncio.iscoroutine(result):
-                            result = await result
-                        
-                        return {"success": True, "result": result}
+                        try:
+                            # Execute the tool function
+                            logger.info(f"Executing tool function with params: {tool_input}")
+                            result = tool_obj.fn(**tool_input)
+                            
+                            # Handle async functions
+                            if asyncio.iscoroutine(result):
+                                result = await result
+                            
+                            logger.info(f"Tool execution successful")
+                            return {"success": True, "result": result}
+                        except Exception as exec_error:
+                            logger.error(f"Error executing tool {tool_name}: {str(exec_error)}")
+                            import traceback
+                            logger.error(traceback.format_exc())
+                            return {"success": False, "error": f"Tool execution failed: {str(exec_error)}"}
                 except Exception as e:
-                    logger.error(f"Error in module {tool_file.stem}: {str(e)}")
+                    logger.error(f"Error loading module {tool_file.stem}: {str(e)}")
+                    import traceback
+                    logger.error(traceback.format_exc())
                     continue
             
-            return {"error": f"Tool {tool_name} not found"}
+            logger.error(f"Tool {tool_name} not found. Available tools: {all_tools}")
+            return {"error": f"Tool {tool_name} not found. Available tools: {', '.join(all_tools)}"}
             
         except Exception as e:
             logger.error(f"Error executing MCP tool {tool_name}: {str(e)}")

@@ -282,20 +282,40 @@
                         </div>
                         
                         <!-- Input Area -->
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="chatInput" 
-                                   placeholder="输入消息..." 
-                                   onkeypress="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendChatMessage(); }">
-                            <button class="btn btn-primary" onclick="sendChatMessage()" id="sendChatBtn">
-                                <i class="bi bi-send"></i> 发送
-                            </button>
-                        </div>
-                        
-                        <div class="mt-2">
-                            <small class="text-muted">
-                                <i class="bi bi-lightbulb"></i> 
-                                <span id="chatTip">可以要求 Claude 使用生成的 MCP 工具</span>
-                            </small>
+                        <div>
+                            <!-- File upload area -->
+                            <div id="chatFileList" class="mb-2" style="display: none;">
+                                <div class="d-flex flex-wrap gap-2" id="chatFiles"></div>
+                            </div>
+                            
+                            <!-- Message input -->
+                            <div class="input-group">
+                                <input type="file" 
+                                       id="chatFileInput" 
+                                       style="display: none;"
+                                       accept=".csv,.txt,.json,.xlsx,.xls"
+                                       multiple
+                                       onchange="handleChatFileUpload(this)">
+                                <button class="btn btn-outline-secondary" 
+                                        type="button" 
+                                        onclick="document.getElementById('chatFileInput').click()"
+                                        title="上传文件">
+                                    <i class="bi bi-paperclip"></i>
+                                </button>
+                                <input type="text" class="form-control" id="chatInput" 
+                                       placeholder="输入消息..." 
+                                       onkeypress="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendChatMessage(); }">
+                                <button class="btn btn-primary" onclick="sendChatMessage()" id="sendChatBtn">
+                                    <i class="bi bi-send"></i> 发送
+                                </button>
+                            </div>
+                            
+                            <div class="mt-2">
+                                <small class="text-muted">
+                                    <i class="bi bi-lightbulb"></i> 
+                                    <span id="chatTip">可以要求 Claude 使用生成的 MCP 工具 | <i class="bi bi-paperclip"></i> 支持上传 CSV, TXT, JSON, Excel 文件</span>
+                                </small>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1047,7 +1067,8 @@ function callClaudeAPI(message) {
         data: JSON.stringify({
             message: message,
             api_key: chatConfig.apiKey,
-            history: chatConfig.conversationHistory
+            history: chatConfig.conversationHistory,
+            uploaded_files: chatUploadedFiles
         }),
         success: function(response) {
             if (response.success) {
@@ -1056,6 +1077,10 @@ function callClaudeAPI(message) {
                     { role: 'user', content: message },
                     { role: 'assistant', content: response.message }
                 );
+                
+                // Clear uploaded files after successful message
+                chatUploadedFiles = [];
+                updateChatFileList();
             } else {
                 addErrorMessage('API 调用失败: ' + (response.error || '未知错误'));
             }
@@ -1284,6 +1309,32 @@ function selectTool(index) {
                 paramsHtml += `<small class="d-block text-muted mb-1">${paramInfo.description}</small>`;
             }
             
+            // Check if this parameter is an INPUT file path (not output)
+            const isOutputParam = paramName.toLowerCase().includes('output') ||
+                                paramName.toLowerCase().includes('out_') ||
+                                paramName.toLowerCase().includes('result') ||
+                                paramName.toLowerCase().includes('save') ||
+                                paramName.toLowerCase().includes('export') ||
+                                (paramInfo.description && (
+                                    paramInfo.description.toLowerCase().includes('output') ||
+                                    paramInfo.description.toLowerCase().includes('save') ||
+                                    paramInfo.description.toLowerCase().includes('export')
+                                ));
+            
+            const isFilePath = !isOutputParam && (
+                             paramName.toLowerCase().includes('file') || 
+                             paramName.toLowerCase().includes('path') || 
+                             paramName.toLowerCase().includes('csv') ||
+                             paramName.toLowerCase().includes('data') ||
+                             (paramInfo.description && (
+                                 paramInfo.description.toLowerCase().includes('input') ||
+                                 paramInfo.description.toLowerCase().includes('file') ||
+                                 paramInfo.description.toLowerCase().includes('path') ||
+                                 paramInfo.description.toLowerCase().includes('csv') ||
+                                 paramInfo.description.toLowerCase().includes('load')
+                             ))
+                             );
+            
             // Generate appropriate input based on type
             if (paramType === 'boolean') {
                 paramsHtml += `
@@ -1294,11 +1345,13 @@ function selectTool(index) {
                     </select>
                 `;
             } else if (paramType === 'integer' || paramType === 'number') {
+                const defaultValue = paramInfo.default !== undefined ? paramInfo.default : '';
                 paramsHtml += `
                     <input type="number" 
                            class="form-control form-control-sm" 
                            id="param_${paramName}" 
-                           placeholder="${paramInfo.default || ''}"
+                           value="${defaultValue}"
+                           placeholder="${defaultValue !== '' ? defaultValue : '输入数值'}"
                            ${isRequired ? 'required' : ''}>
                 `;
             } else if (paramType === 'array') {
@@ -1317,12 +1370,57 @@ function selectTool(index) {
                               placeholder='输入 JSON 对象，例如: {"key": "value"}'
                               ${isRequired ? 'required' : ''}></textarea>
                 `;
+            } else if (isFilePath) {
+                // Show file upload option for INPUT file path parameters
+                paramsHtml += `
+                    <div class="input-group input-group-sm">
+                        <input type="text" 
+                               class="form-control form-control-sm" 
+                               id="param_${paramName}" 
+                               placeholder="${paramInfo.default || '点击右侧按钮上传输入文件'}"
+                               ${isRequired ? 'required' : ''}
+                               readonly>
+                        <input type="file" 
+                               id="file_${paramName}" 
+                               style="display: none;"
+                               accept=".csv,.txt,.json,.xlsx,.xls,.npy,.pkl,.pickle"
+                               onchange="handleFileUpload(this, 'param_${paramName}')">
+                        <button class="btn btn-outline-primary btn-sm" 
+                                type="button"
+                                onclick="document.getElementById('file_${paramName}').click()"
+                                title="上传输入数据文件">
+                            <i class="bi bi-upload"></i> 上传输入文件
+                        </button>
+                    </div>
+                    <small class="text-muted">📁 上传输入数据 (支持: CSV, TXT, JSON, Excel, NPY, PKL)</small>
+                `;
+            } else if (isOutputParam) {
+                // Output path parameter - show folder selection
+                const defaultOutputHint = `${projectName}_Agent/tmp/outputs/`;
+                paramsHtml += `
+                    <div class="input-group input-group-sm">
+                        <input type="text" 
+                               class="form-control form-control-sm" 
+                               id="param_${paramName}" 
+                               placeholder="${paramInfo.default || '留空使用默认'}"
+                               ${isRequired ? 'required' : ''}>
+                        <button class="btn btn-outline-success btn-sm" 
+                                type="button"
+                                onclick="selectOutputFolder('param_${paramName}')"
+                                title="选择输出文件夹">
+                            <i class="bi bi-folder2-open"></i> 选择文件夹
+                        </button>
+                    </div>
+                    <small class="text-muted">💾 默认输出到: <code>${defaultOutputHint}</code>（可自定义文件夹或文件名前缀）</small>
+                `;
             } else {
+                const defaultValue = paramInfo.default !== undefined && paramInfo.default !== null ? paramInfo.default : '';
                 paramsHtml += `
                     <input type="text" 
                            class="form-control form-control-sm" 
                            id="param_${paramName}" 
-                           placeholder="${paramInfo.default || ''}"
+                           value="${defaultValue}"
+                           placeholder="${defaultValue !== '' ? defaultValue : '输入文本'}"
                            ${isRequired ? 'required' : ''}>
                 `;
             }
@@ -1332,6 +1430,160 @@ function selectTool(index) {
     }
     
     $('#toolParameters').html(paramsHtml);
+}
+
+// Global variable to store uploaded chat files
+let chatUploadedFiles = [];
+
+// Select output folder using File System Access API
+async function selectOutputFolder(targetParamId) {
+    try {
+        if ('showDirectoryPicker' in window) {
+            // Use modern Directory Picker API
+            const dirHandle = await window.showDirectoryPicker({
+                mode: 'readwrite'
+            });
+            
+            // Try to resolve the full path through FileSystemDirectoryHandle
+            // Note: Full path is not directly accessible due to browser security
+            // We'll need to ask user to confirm the path
+            const folderName = dirHandle.name;
+            
+            // Prompt user to provide the full path since browser doesn't expose it
+            const fullPath = prompt(
+                `您选择了文件夹: ${folderName}\n\n` +
+                `由于浏览器安全限制，请输入该文件夹的完整路径：\n\n` +
+                `例如：/home/zephyr/Documents/${folderName}`,
+                `/home/zephyr/${folderName}`
+            );
+            
+            if (fullPath) {
+                $(`#${targetParamId}`).val(fullPath.trim());
+                showToast(`已设置输出文件夹: ${fullPath}`, 'success');
+            }
+        } else {
+            // Fallback: direct path input
+            const defaultPath = `/home/zephyr/Paper2Agent-main/${projectName}_Agent/tmp/outputs`;
+            const userPath = prompt(
+                '您的浏览器不支持文件夹选择。\n请输入输出文件夹的完整路径：\n\n' +
+                `默认路径: ${defaultPath}\n\n` +
+                '示例: /home/zephyr/my_results',
+                defaultPath
+            );
+            
+            if (userPath) {
+                $(`#${targetParamId}`).val(userPath.trim());
+                showToast(`已设置输出文件夹: ${userPath}`, 'success');
+            }
+        }
+    } catch (err) {
+        if (err.name !== 'AbortError') {
+            console.error('选择文件夹失败:', err);
+            showToast('文件夹选择失败', 'warning');
+        }
+    }
+}
+
+// Handle file upload for tool parameters
+function handleFileUpload(input, targetParamId) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    // Show uploading message
+    $(`#${targetParamId}`).val('上传中...');
+    
+    $.ajax({
+        url: '/api/upload',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.success) {
+                // Store the file path with a marker
+                $(`#${targetParamId}`).val('__UPLOAD__:' + response.filepath);
+                $(`#${targetParamId}`).attr('data-filename', response.filename);
+                showToast(`文件上传成功: ${response.filename}`, 'success');
+            } else {
+                showToast('文件上传失败: ' + response.error, 'danger');
+                $(`#${targetParamId}`).val('');
+            }
+        },
+        error: function(xhr) {
+            showToast('文件上传失败', 'danger');
+            $(`#${targetParamId}`).val('');
+        }
+    });
+}
+
+// Handle file upload for chat
+function handleChatFileUpload(input) {
+    const files = input.files;
+    if (!files || files.length === 0) return;
+    
+    // Upload each file
+    Array.from(files).forEach(file => {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        $.ajax({
+            url: '/api/upload',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    chatUploadedFiles.push({
+                        filename: response.filename,
+                        filepath: response.filepath
+                    });
+                    updateChatFileList();
+                    showToast(`文件上传成功: ${response.filename}`, 'success');
+                } else {
+                    showToast('文件上传失败: ' + response.error, 'danger');
+                }
+            },
+            error: function() {
+                showToast(`文件上传失败: ${file.name}`, 'danger');
+            }
+        });
+    });
+    
+    // Clear input
+    input.value = '';
+}
+
+// Update chat file list display
+function updateChatFileList() {
+    if (chatUploadedFiles.length === 0) {
+        $('#chatFileList').hide();
+        return;
+    }
+    
+    $('#chatFileList').show();
+    let html = '';
+    chatUploadedFiles.forEach((file, index) => {
+        html += `
+            <span class="badge bg-secondary">
+                <i class="bi bi-file-earmark"></i> ${file.filename}
+                <button type="button" 
+                        class="btn-close btn-close-white ms-1" 
+                        style="font-size: 0.6em;"
+                        onclick="removeChatFile(${index})"></button>
+            </span>
+        `;
+    });
+    $('#chatFiles').html(html);
+}
+
+// Remove a file from chat upload list
+function removeChatFile(index) {
+    chatUploadedFiles.splice(index, 1);
+    updateChatFileList();
 }
 
 function executeSelectedTool() {
@@ -1348,22 +1600,37 @@ function executeSelectedTool() {
         const paramName = $(this).attr('id').replace('param_', '');
         let value = $(this).val();
         
-        if (value) {
+        // Skip if value is undefined, but process empty strings
+        if (value === undefined || value === null) {
+            return;
+        }
+        
+        // Only skip empty values for file upload fields (readonly)
+        if (value === '' && $(this).attr('readonly')) {
+            return;
+        }
+        
+        // Handle different input types
+        if ($(this).is('textarea')) {
             // Try to parse JSON for arrays and objects
-            if ($(this).is('textarea')) {
+            if (value) {
                 try {
                     value = JSON.parse(value);
                 } catch (e) {
                     // Keep as string if not valid JSON
                 }
-            } else if (value === 'true' || value === 'false') {
-                value = value === 'true';
-            } else if (!isNaN(value) && value !== '') {
-                value = Number(value);
             }
-            
-            params[paramName] = value;
+        } else if (value === 'true' || value === 'false') {
+            value = value === 'true';
+        } else if ($(this).attr('type') === 'number' && value !== '') {
+            value = Number(value);
+        } else if (!$(this).attr('type') && !isNaN(value) && value !== '' && !$(this).is('select')) {
+            // For generic text inputs that contain numbers
+            value = Number(value);
         }
+        // For string inputs, keep as string (including empty strings)
+        
+        params[paramName] = value;
     });
     
     // Show loading state
